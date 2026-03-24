@@ -1,0 +1,118 @@
+.footer {
+  background: var(--surface-low);
+  border-top: 1px solid rgba(60, 73, 78, 0.25);
+  margin-top: 80px;
+  padding: 60px 24px 0;
+}
+
+.inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 60px;
+  padding-bottom: 48px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.brand {}
+
+.logo {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 12px;
+
+  span {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.tagline {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  max-width: 260px;
+  margin-bottom: 6px;
+}
+
+.sub {
+  font-size: 11px;
+  color: var(--outline);
+  font-family: var(--font-headline);
+  letter-spacing: 0.5px;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  a {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    transition: color 0.15s;
+
+    &:hover {
+      color: var(--primary-container);
+    }
+  }
+}
+
+.groupTitle {
+  font-family: var(--font-headline);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--outline);
+  margin-bottom: 4px;
+}
+
+.bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 0 24px;
+  border-top: 1px solid rgba(60, 73, 78, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--outline);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
+
+.powered {
+  font-family: var(--font-headline);
+}
+
+.highlight {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
