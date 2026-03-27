@@ -50,7 +50,7 @@ async def generate_article(raw_article: Dict) -> Dict | None:
                         {"role": "user", "content": user_prompt},
                     ],
                     "temperature": 0.7,
-                    "max_tokens": 2000,
+                    "max_tokens": 4000,
                 },
             )
             resp.raise_for_status()
