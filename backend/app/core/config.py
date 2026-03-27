@@ -1,7 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import field_validator
 from typing import List
-import json
 
 
 class Settings(BaseSettings):
@@ -10,12 +9,12 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     CORS_ORIGINS: str = "http://localhost:5173"
 
-@field_validator("CORS_ORIGINS", mode="before")
-@classmethod
-def parse_cors(cls, v):
-    if isinstance(v, str):
-        return v  # 直接回傳字串，不做 parse
-    return v
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors(cls, v):
+        if isinstance(v, str):
+            return v
+        return v
 
     # Database
     DATABASE_URL: str
