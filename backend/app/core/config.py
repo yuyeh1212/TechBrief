@@ -8,17 +8,14 @@ class Settings(BaseSettings):
     # App
     APP_NAME: str = "TechBrief API"
     DEBUG: bool = False
-    CORS_ORIGINS: List[str] = ["http://localhost:5173"]
+    CORS_ORIGINS: str = "http://localhost:5173"
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors(cls, v):
-        if isinstance(v, str):
-            try:
-                return json.loads(v)
-            except json.JSONDecodeError:
-                return [o.strip() for o in v.split(",")]
-        return v
+@field_validator("CORS_ORIGINS", mode="before")
+@classmethod
+def parse_cors(cls, v):
+    if isinstance(v, str):
+        return v  # 直接回傳字串，不做 parse
+    return v
 
     # Database
     DATABASE_URL: str
