@@ -49,6 +49,7 @@ async def daily_news_job():
             generated = await generate_article(raw)
             if not generated:
                 continue
+            print(f"[Scheduler] generated keys: {list(generated.keys())}")
 
             slug = slugify(generated.get("title", raw["title"]))
             article = Article(
@@ -74,7 +75,12 @@ async def daily_news_job():
             count += 1
             print(f"[Scheduler] 已生成: {article.title}")
 
-        await db.commit()
+        try:
+            await db.commit()
+            print(f"[Scheduler] DB commit 成功")
+        except Exception as e:
+            print(f"[Scheduler] DB commit 失敗: {e}")
+            await db.rollback()
 
     print(f"[Scheduler] 共生成 {len(saved_articles)} 篇文章")
 
