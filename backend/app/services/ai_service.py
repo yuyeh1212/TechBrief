@@ -58,12 +58,13 @@ async def generate_article(raw_article: Dict) -> Dict | None:
             raw_content = data["choices"][0]["message"]["content"]
 
             # 清理可能的 markdown code block
-            cleaned = re.sub(r"```(?:json)?\n?", "", raw_content).strip()
+            cleaned = re.sub(r"^```(?:json)?\s*", "", raw_content.strip())
+            cleaned = re.sub(r"\s*```$", "", cleaned).strip()
             result = json.loads(cleaned)
             return result
 
     except json.JSONDecodeError as e:
-        print(f"[AI] JSON 解析失敗: {e}, content={raw_content[:200]}")
+        print(f"[AI] JSON 解析失敗: {e}, content={raw_content[:200] if 'raw_content' in dir() else 'N/A'}")
         return None
     except Exception as e:
         print(f"[AI] 生成失敗: {e}")
