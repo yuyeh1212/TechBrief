@@ -63,7 +63,9 @@ export default function Navbar() {
                 ref={aiRef}
                 className={styles.navItemWrapper}
                 onMouseEnter={() => setAiOpen(true)}
-                onMouseLeave={() => setAiOpen(false)}
+                onMouseLeave={(e) => {
+                  if (!aiRef.current?.contains(e.relatedTarget)) setAiOpen(false);
+                }}
               >
                 <NavLink
                   to={item.to}

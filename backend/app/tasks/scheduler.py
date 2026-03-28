@@ -1,5 +1,6 @@
 import re
 import random
+import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import select
@@ -16,6 +17,20 @@ from app.services.email_service import send_newsletter
 
 scheduler = AsyncIOScheduler(timezone="Asia/Taipei")
 
+async def fetch_unsplash_image(query: str) -> str | None:
+    if not settings.UNSPLASH_ACCESS_KEY:
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                "https://api.unsplash.com/photos/random",
+                params={"query": query, "orientation": "landscape"},
+                headers={"Authorization": f"Client-ID {settings.UNSPLASH_ACCESS_KEY}"},
+            )
+            data = resp.json()
+            return data["urls"]["regular"]
+    except Exception:
+        return None
 
 def slugify(title: str) -> str:
     slug = re.sub(r"[^\w\s-]", "", title.lower())
@@ -52,12 +67,13 @@ async def daily_news_job():
             print(f"[Scheduler] generated keys: {list(generated.keys())}")
 
             slug = slugify(generated.get("title", raw["title"]))
+            image_url = raw.get("image_url") or await fetch_unsplash_image(generated.get("title", ""))
             article = Article(
                 title=generated["title"],
                 slug=slug,
                 summary=generated["summary"],
                 content=generated["content"],
-                category=generated.get("category", raw["category"]),
+                category=raw["category"] if raw["category"] != "tech" else generated.get("category", "tech"),
                 image_url=raw.get("image_url"),
                 source_url=raw["url"],
                 source_name=raw["source_name"],
