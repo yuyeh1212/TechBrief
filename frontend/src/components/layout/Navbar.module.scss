@@ -5,7 +5,9 @@
   right: 0;
   z-index: 100;
   height: var(--nav-height);
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  transition:
+    background 0.3s ease,
+    backdrop-filter 0.3s ease;
 
   &.scrolled {
     background: rgba(18, 18, 35, 0.85);
@@ -79,7 +81,9 @@
   font-weight: 500;
   letter-spacing: 0.5px;
   color: var(--on-surface-variant);
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
   white-space: nowrap;
 
   &:hover {
@@ -103,13 +107,16 @@
 
 .submenu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: 100%;
+  padding-top: 8px;
   left: 0;
   background: var(--surface-high);
   border-radius: var(--radius-md);
   padding: 6px;
   min-width: 160px;
-  box-shadow: var(--glow-primary), 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    var(--glow-primary),
+    0 8px 32px rgba(0, 0, 0, 0.4);
   animation: fade-in-up 0.15s ease;
 }
 
@@ -203,9 +210,15 @@
     transition: all 0.25s;
   }
 
-  &.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  &.open span:nth-child(2) { opacity: 0; }
-  &.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  &.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  &.open span:nth-child(2) {
+    opacity: 0;
+  }
+  &.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 
   @media (max-width: 768px) {
     display: flex;
@@ -239,10 +252,13 @@
   cursor: pointer;
   text-align: left;
   border-radius: var(--radius-sm);
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
-  &:hover, &.active {
-    background: rgba(255,255,255,0.05);
+  &:hover,
+  &.active {
+    background: rgba(255, 255, 255, 0.05);
     color: var(--on-surface);
   }
 }

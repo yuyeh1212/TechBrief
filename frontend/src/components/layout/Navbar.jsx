@@ -63,9 +63,7 @@ export default function Navbar() {
                 ref={aiRef}
                 className={styles.navItemWrapper}
                 onMouseEnter={() => setAiOpen(true)}
-                onMouseLeave={(e) => {
-                  if (!aiRef.current?.contains(e.relatedTarget)) setAiOpen(false);
-                }}
+                onMouseLeave={() => setAiOpen(false)}
               >
                 <NavLink
                   to={item.to}
@@ -74,8 +72,20 @@ export default function Navbar() {
                   }
                 >
                   {item.label}
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`${styles.chevron} ${aiOpen ? styles.open : ""}`}>
-                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    className={`${styles.chevron} ${aiOpen ? styles.open : ""}`}
+                  >
+                    <path
+                      d="M2 4l4 4 4-4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </NavLink>
 
@@ -107,7 +117,7 @@ export default function Navbar() {
               >
                 {item.label}
               </NavLink>
-            )
+            ),
           )}
         </nav>
 
@@ -124,7 +134,9 @@ export default function Navbar() {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="選單"
         >
-          <span /><span /><span />
+          <span />
+          <span />
+          <span />
         </button>
       </div>
 
@@ -139,8 +151,20 @@ export default function Navbar() {
                   onClick={() => setMobileAiOpen(!mobileAiOpen)}
                 >
                   {item.label}
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`${styles.chevron} ${mobileAiOpen ? styles.open : ""}`}>
-                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    className={`${styles.chevron} ${mobileAiOpen ? styles.open : ""}`}
+                  >
+                    <path
+                      d="M2 4l4 4 4-4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </button>
                 {mobileAiOpen && (
@@ -166,7 +190,7 @@ export default function Navbar() {
               >
                 {item.label}
               </NavLink>
-            )
+            ),
           )}
         </nav>
       )}
