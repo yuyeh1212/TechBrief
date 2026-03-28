@@ -72,7 +72,6 @@ export default function Navbar() {
                   className={({ isActive }) =>
                     `${styles.navLink} ${isActive ? styles.active : ""}`
                   }
-                  onClick={() => setAiOpen(false)}
                 >
                   {item.label}
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className={`${styles.chevron} ${aiOpen ? styles.open : ""}`}>
