@@ -91,8 +91,10 @@ async def send_newsletter(subscribers: List[str], articles: List[Dict]) -> Dict:
 
 async def send_subscription_confirm(email: str) -> None:
     """發送訂閱確認信"""
+    import asyncio
     resend.api_key = settings.RESEND_API_KEY
-    resend.Emails.send({
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, lambda: resend.Emails.send({
         "from": settings.RESEND_FROM_EMAIL,
         "to": [email],
         "subject": "歡迎訂閱 TechBrief 科技快訊 🎉",
@@ -104,5 +106,4 @@ async def send_subscription_confirm(email: str) -> None:
             <p style="color:#bbc9cf;font-size:13px;">如果您未訂閱此服務，請忽略這封郵件。</p>
         </div>
         """,
-    })
-
+    }))
