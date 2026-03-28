@@ -2,10 +2,8 @@ import resend
 from typing import List, Dict
 from app.core.config import settings
 
-resend.api_key = settings.RESEND_API_KEY
 
-
-def build_newsletter_html(articles: List[Dict], site_url: str = "https://techbrief.tw") -> str:
+def build_newsletter_html(articles: List[Dict], site_url: str = "https://techbrief.zeabur.app") -> str:
     articles_html = ""
     for article in articles[:10]:
         img_tag = ""
@@ -66,11 +64,11 @@ def build_newsletter_html(articles: List[Dict], site_url: str = "https://techbri
 
 async def send_newsletter(subscribers: List[str], articles: List[Dict]) -> Dict:
     """批次發送電子報給訂閱者"""
+    resend.api_key = settings.RESEND_API_KEY
     html = build_newsletter_html(articles)
     success_count = 0
     fail_count = 0
 
-    # Resend 免費版一次最多 100 個收件人，分批送
     batch_size = 50
     for i in range(0, len(subscribers), batch_size):
         batch = subscribers[i:i + batch_size]
@@ -93,6 +91,7 @@ async def send_newsletter(subscribers: List[str], articles: List[Dict]) -> Dict:
 
 async def send_subscription_confirm(email: str) -> None:
     """發送訂閱確認信"""
+    resend.api_key = settings.RESEND_API_KEY
     resend.Emails.send({
         "from": settings.RESEND_FROM_EMAIL,
         "to": [email],
