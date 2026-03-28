@@ -105,3 +105,4 @@ async def send_subscription_confirm(email: str) -> None:
         </div>
         """,
     })
+
