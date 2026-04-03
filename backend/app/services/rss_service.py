@@ -8,30 +8,32 @@ from typing import List, Dict
 
 RSS_SOURCES = [
     # 台灣科技媒體
-    {"name": "自由時報科技", "url": "https://news.ltn.com.tw/rss/tech.xml", "category": "tech"},
-    {"name": "數位時代", "url": "https://www.bnext.com.tw/rss", "category": "tech"},
+    {"name": "自由時報科技", "url": "https://news.ltn.com.tw/rss/all.xml", "category": "tech"},
     {"name": "科技新報", "url": "https://technews.tw/feed/", "category": "tech"},
     {"name": "科技報橘", "url": "https://buzzorange.com/techorange/feed/", "category": "tech"},
     {"name": "iThome", "url": "https://www.ithome.com.tw/rss", "category": "tech"},
-    {"name": "電腦王阿達", "url": "https://www.koc.com.tw/archives/feed", "category": "tech"},
-    {"name": "新聞雲 AI", "url": "https://ai.ettoday.net/news/rss2.xml", "category": "ai"},
     {"name": "動腦新聞科技", "url": "https://www.brain.com.tw/rss", "category": "tech"},
+    {"name": "Ars Technica AI", "url": "https://arstechnica.com/ai/feed/", "category": "ai"},
 
     # 國際 AI 媒體
     {"name": "TechCrunch AI", "url": "https://techcrunch.com/category/artificial-intelligence/feed/", "category": "ai"},
-    {"name": "The Verge AI", "url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml", "category": "ai"},
+    {"name": "The Verge AI", "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", "category": "ai"},
     {"name": "VentureBeat AI", "url": "https://venturebeat.com/category/ai/feed/", "category": "ai"},
     {"name": "MIT Technology Review", "url": "https://www.technologyreview.com/feed/", "category": "ai"},
-    {"name": "Wired AI", "url": "https://www.wired.com/feed/tag/artificial-intelligence/latest/rss", "category": "ai"},
+    {"name": "Wired AI", "url": "https://www.wired.com/feed/tag/ai/latest/rss", "category": "ai"},
+    {"name": "The Guardian AI", "url": "https://www.theguardian.com/technology/artificialintelligenceai/rss", "category": "ai"},
 
-    # GPT / OpenAI 相關
+    # 官方部落格
     {"name": "OpenAI Blog", "url": "https://openai.com/blog/rss.xml", "category": "gpt"},
-
-    # Gemini / Google 相關
     {"name": "Google AI Blog", "url": "https://blog.google/technology/ai/rss/", "category": "gemini"},
-
-    # Claude / Anthropic 相關
     {"name": "Anthropic Blog", "url": "https://www.anthropic.com/rss.xml", "category": "claude"},
+
+    # 財經
+    {"name": "經濟日報", "url": "https://money.udn.com/rssfeed/news/1001/5591", "category": "finance"},
+    {"name": "工商時報", "url": "https://ctee.com.tw/feed", "category": "finance"},
+    {"name": "MoneyDJ", "url": "https://www.moneydj.com/KMDJ/RssReader/RssReader.aspx?id=1", "category": "finance"},
+    {"name": "Reuters Business", "url": "https://feeds.reuters.com/reuters/businessNews", "category": "finance"},
+    {"name": "Yahoo Finance", "url": "https://finance.yahoo.com/news/rssindex", "category": "finance"},
 ]
 
 CATEGORY_KEYWORDS = {
@@ -44,10 +46,14 @@ CATEGORY_KEYWORDS = {
                       "no-code", "low-code", "agent", "agentic"],
 }
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/rss+xml, application/xml, text/xml, */*",
+}
+
 
 def detect_category(title: str, summary: str) -> str:
     text = (title + " " + summary).lower()
-    # 順序很重要：先比對細分類，再比對大類
     for cat in ["gpt", "gemini", "claude", "collaboration", "ai"]:
         if any(kw in text for kw in CATEGORY_KEYWORDS[cat]):
             return cat
@@ -55,11 +61,10 @@ def detect_category(title: str, summary: str) -> str:
 
 
 async def fetch_rss_articles(hours: int = 24) -> List[Dict]:
-    """抓取所有 RSS 來源最近 N 小時的文章"""
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     articles = []
 
-    async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+    async with httpx.AsyncClient(timeout=15.0, follow_redirects=True, headers=HEADERS) as client:
         for source in RSS_SOURCES:
             try:
                 resp = await client.get(source["url"])
@@ -95,10 +100,13 @@ async def fetch_rss_articles(hours: int = 24) -> List[Dict]:
                     if not title or not url:
                         continue
 
-                    # source 預設 category 優先，避免 tech 來源的 AI 文章被誤判
-                    detected = detect_category(title, summary_clean)
-                    # 如果 source 本身就是特定分類（gpt/gemini/claude），鎖定不被覆蓋
-                    final_category = source["category"] if source["category"] in ("gpt", "gemini", "claude") else detected
+                    # finance 來源鎖定分類，不走 detect_category
+                    if source["category"] == "finance":
+                        final_category = "finance"
+                    elif source["category"] in ("gpt", "gemini", "claude"):
+                        final_category = source["category"]
+                    else:
+                        final_category = detect_category(title, summary_clean)
 
                     articles.append({
                         "title": title,
@@ -114,7 +122,6 @@ async def fetch_rss_articles(hours: int = 24) -> List[Dict]:
                 print(f"[RSS] {source['name']} 抓取失敗: {e}")
                 continue
 
-    # 去重（同 URL）
     seen = set()
     unique = []
     for a in articles:
