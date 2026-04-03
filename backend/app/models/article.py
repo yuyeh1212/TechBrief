@@ -12,6 +12,7 @@ class ArticleCategory(str, enum.Enum):
     CLAUDE = "claude"
     TECH = "tech"
     COLLABORATION = "collaboration"
+    FINANCE = "finance"
 
 
 class Article(Base):
@@ -26,6 +27,9 @@ class Article(Base):
     image_url: Mapped[str] = mapped_column(String(1000), nullable=True)
     source_url: Mapped[str] = mapped_column(String(1000), nullable=True)
     source_name: Mapped[str] = mapped_column(String(200), nullable=True)
+    card_summary: Mapped[str] = mapped_column(Text, nullable=True)
+    related_stocks: Mapped[str] = mapped_column(String(500), nullable=True)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=True)
     is_published: Mapped[bool] = mapped_column(Boolean, default=True)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(
