@@ -21,6 +21,8 @@ class ArticleOut(BaseModel):
     image_url: Optional[str]
     source_url: Optional[str]
     source_name: Optional[str]
+    card_summary: Optional[str]
+    related_stocks: Optional[str]
     view_count: int
     created_at: datetime
 
@@ -33,6 +35,8 @@ class ArticleListOut(BaseModel):
     title: str
     slug: str
     summary: str
+    category: str
+    card_summary: Optional[str]
     category: str
     image_url: Optional[str]
     source_name: Optional[str]
