@@ -93,6 +93,8 @@
 .gridItem {
   opacity: 0;
   animation: fade-in-up 0.4s ease forwards;
+  display: flex;
+  flex-direction: column;
 }
 
 .skeleton {
