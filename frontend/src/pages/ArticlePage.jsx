@@ -24,7 +24,8 @@ const CATEGORY_PATH = {
   collaboration: "/collaboration",
 };
 
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&q=80";
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&q=80";
 
 export default function ArticlePage() {
   const { slug } = useParams();
@@ -76,7 +77,9 @@ export default function ArticlePage() {
         <div className={styles.notFound}>
           <h1>404</h1>
           <p>找不到這篇文章</p>
-          <Link to="/" className={styles.backBtn}>返回首頁</Link>
+          <Link to="/" className={styles.backBtn}>
+            返回首頁
+          </Link>
         </div>
       </main>
     );
@@ -89,7 +92,9 @@ export default function ArticlePage() {
         <img
           src={article.image_url || FALLBACK_IMAGE}
           alt={article.title}
-          onError={(e) => { e.target.src = FALLBACK_IMAGE; }}
+          onError={(e) => {
+            e.target.src = FALLBACK_IMAGE;
+          }}
         />
         <div className={styles.heroOverlay} />
       </div>
@@ -103,7 +108,9 @@ export default function ArticlePage() {
             {CATEGORY_LABEL[article.category] || article.category}
           </Link>
           <span>›</span>
-          <span className={styles.breadcrumbCurrent}>{article.title.slice(0, 30)}…</span>
+          <span className={styles.breadcrumbCurrent}>
+            {article.title.slice(0, 30)}…
+          </span>
         </nav>
 
         <article className={styles.article}>
@@ -119,23 +126,55 @@ export default function ArticlePage() {
               {article.source_name && (
                 <span className={styles.metaItem}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z" stroke="currentColor" strokeWidth="1.5"/>
-                    <path d="M16 3v4M8 3v4M3 11h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path
+                      d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M16 3v4M8 3v4M3 11h18"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
                   </svg>
                   {article.source_name}
                 </span>
               )}
               <span className={styles.metaItem}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    d="M12 7v5l3 3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
                 </svg>
-                {format(new Date(article.created_at), "yyyy年MM月dd日 HH:mm", { locale: zhTW })}
+                {format(new Date(article.created_at), "yyyy年MM月dd日 HH:mm", {
+                  locale: zhTW,
+                })}
               </span>
               <span className={styles.metaItem}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
+                  <path
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
                 </svg>
                 {article.view_count} 次瀏覽
               </span>
@@ -152,12 +191,44 @@ export default function ArticlePage() {
           {article.source_url && (
             <div className={styles.sourceLink}>
               <span>原始來源：</span>
-              <a href={article.source_url} target="_blank" rel="noopener noreferrer">
+              <a
+                href={article.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {article.source_name || article.source_url}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </a>
+            </div>
+          )}
+          {/* 相關股票提示 - Pro 限定 */}
+          {article.related_stocks && (
+            <div className={styles.stockSection}>
+              <div className={styles.stockLock}>
+                <div className={styles.stockBlur}>
+                  <span className={styles.stockLabel}>📈 相關股票提示</span>
+                  <div className={styles.stockTags}>
+                    {["NVDA", "2330.TW", "AAPL"].map((s) => (
+                      <span key={s} className={styles.stockTag}>
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles.stockOverlay}>
+                  <span>🔒</span>
+                  <p>升級 Pro 解鎖股票提示</p>
+                  <button className={styles.upgradeBtn}>升級方案</button>
+                </div>
+              </div>
             </div>
           )}
         </article>
