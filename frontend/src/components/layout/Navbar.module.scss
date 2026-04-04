@@ -285,3 +285,19 @@
     color: var(--primary-container);
   }
 }
+
+.searchIcon {
+  background: transparent;
+  border: none;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--primary);
+  }
+}

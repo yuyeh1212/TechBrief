@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import CategoryPage from "@/pages/CategoryPage";
 import ArticlePage from "@/pages/ArticlePage";
 import Privacy from "@/pages/Privacy";
+import SearchPage from "@/pages/SearchPage";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
@@ -23,9 +24,12 @@ export default function App() {
           {/* AI 子頁 */}
           <Route path="/ai/:sub" element={<CategoryPage pageKey="ai" />} />
 
-          <Route path="/collaboration" element={<CategoryPage pageKey="collaboration" />} />
+          <Route
+            path="/collaboration"
+            element={<CategoryPage pageKey="collaboration" />}
+          />
           <Route path="/tech" element={<CategoryPage pageKey="tech" />} />
-
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/article/:slug" element={<ArticlePage />} />
           <Route path="/privacy" element={<Privacy />} />
 
@@ -55,7 +59,15 @@ function UnsubscribePage() {
   }
 
   return (
-    <main style={{ paddingTop: "var(--nav-height)", minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <main
+      style={{
+        paddingTop: "var(--nav-height)",
+        minHeight: "80vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <div style={{ textAlign: "center", padding: "40px 24px" }}>
         {done ? (
           <p style={{ color: "var(--on-surface-variant)", fontSize: "16px" }}>
@@ -63,8 +75,15 @@ function UnsubscribePage() {
           </p>
         ) : (
           <>
-            <p style={{ color: "var(--on-surface-variant)", marginBottom: "24px" }}>
-              確定要取消訂閱 <strong style={{ color: "var(--on-surface)" }}>{email}</strong> 嗎？
+            <p
+              style={{
+                color: "var(--on-surface-variant)",
+                marginBottom: "24px",
+              }}
+            >
+              確定要取消訂閱{" "}
+              <strong style={{ color: "var(--on-surface)" }}>{email}</strong>{" "}
+              嗎？
             </p>
             <button
               onClick={handleUnsubscribe}
@@ -87,5 +106,3 @@ function UnsubscribePage() {
     </main>
   );
 }
-
-

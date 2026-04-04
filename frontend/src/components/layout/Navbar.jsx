@@ -22,6 +22,7 @@ export default function Navbar() {
   const [mobileAiOpen, setMobileAiOpen] = useState(false);
   const aiRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -120,6 +121,29 @@ export default function Navbar() {
             ),
           )}
         </nav>
+
+        {/* 搜尋 */}
+        <button
+          className={styles.searchIcon}
+          onClick={() => navigate("/search")}
+          aria-label="搜尋"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle
+              cx="11"
+              cy="11"
+              r="8"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M21 21l-4.35-4.35"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
 
         {/* Live pulse indicator */}
         <div className={styles.liveIndicator}>
