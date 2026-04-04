@@ -38,10 +38,10 @@ const PAGE_META = {
   },
 };
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 9;
 
 export default function CategoryPage({ pageKey }) {
-  const { sub } = useParams(); // ai/gpt, ai/gemini, ai/claude
+  const { sub } = useParams();
   const key = sub || pageKey;
   const meta = PAGE_META[key] || PAGE_META.tech;
 
@@ -49,40 +49,58 @@ export default function CategoryPage({ pageKey }) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
 
-  const fetchArticles = useCallback(async (p = 1, reset = false) => {
-    if (p === 1) setLoading(true);
-    else setLoadingMore(true);
-
-    try {
-      const data = await getArticles({
-        category: meta.category,
-        page: p,
-        page_size: PAGE_SIZE,
-      });
-
-      setArticles((prev) => reset ? data.items : [...prev, ...data.items]);
-      setTotalPages(data.total_pages);
-      setPage(p);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, [meta.category]);
+  const fetchArticles = useCallback(
+    async (p = 1) => {
+      setLoading(true);
+      try {
+        const data = await getArticles({
+          category: meta.category,
+          page: p,
+          page_size: PAGE_SIZE,
+        });
+        setArticles(data.items);
+        setTotalPages(data.total_pages);
+        setPage(p);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [meta.category],
+  );
 
   useEffect(() => {
-    setArticles([]);
     setPage(1);
-    fetchArticles(1, true);
+    fetchArticles(1);
   }, [key]);
 
-  const loadMore = () => {
-    if (page < totalPages && !loadingMore) {
-      fetchArticles(page + 1);
+  const goToPage = (p) => {
+    if (p >= 1 && p <= totalPages && p !== page) {
+      fetchArticles(p);
     }
+  };
+
+  // 產生頁碼陣列，最多顯示 5 個
+  const getPageNumbers = () => {
+    const delta = 2;
+    const range = [];
+    const left = Math.max(1, page - delta);
+    const right = Math.min(totalPages, page + delta);
+
+    for (let i = left; i <= right; i++) range.push(i);
+
+    if (left > 1) {
+      range.unshift("...");
+      range.unshift(1);
+    }
+    if (right < totalPages) {
+      range.push("...");
+      range.push(totalPages);
+    }
+    return range;
   };
 
   return (
@@ -98,7 +116,7 @@ export default function CategoryPage({ pageKey }) {
       <div className={styles.container}>
         {loading ? (
           <div className={styles.grid}>
-            {[...Array(6)].map((_, i) => (
+            {[...Array(9)].map((_, i) => (
               <div key={i} className={styles.skeleton} />
             ))}
           </div>
@@ -114,21 +132,45 @@ export default function CategoryPage({ pageKey }) {
                 <div
                   key={a.id}
                   className={styles.gridItem}
-                  style={{ animationDelay: `${(i % PAGE_SIZE) * 0.05}s` }}
+                  style={{ animationDelay: `${i * 0.05}s` }}
                 >
                   <ArticleCard article={a} />
                 </div>
               ))}
             </div>
 
-            {page < totalPages && (
-              <div className={styles.loadMoreWrap}>
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
                 <button
-                  className={styles.loadMoreBtn}
-                  onClick={loadMore}
-                  disabled={loadingMore}
+                  className={styles.pageBtn}
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page === 1}
                 >
-                  {loadingMore ? "載入中…" : "載入更多"}
+                  ‹
+                </button>
+
+                {getPageNumbers().map((p, i) =>
+                  p === "..." ? (
+                    <span key={`ellipsis-${i}`} className={styles.ellipsis}>
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={p}
+                      className={`${styles.pageBtn} ${p === page ? styles.pageBtnActive : ""}`}
+                      onClick={() => goToPage(p)}
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+
+                <button
+                  className={styles.pageBtn}
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page === totalPages}
+                >
+                  ›
                 </button>
               </div>
             )}
