@@ -23,3 +23,10 @@ export const subscribe = (email) =>
 
 export const unsubscribe = (email) =>
   api.delete("/subscribers", { params: { email } }).then((r) => r.data);
+
+// 搜尋功能
+export const searchArticles = async ({ q, page = 1, page_size = 9 }) => {
+  const params = new URLSearchParams({ q, page, page_size });
+  const res = await api.get(`/articles/search?${params}`);
+  return res.data;
+};

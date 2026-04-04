@@ -101,6 +101,39 @@ async def get_latest_articles(
     )
     return result.scalars().all()
 
+@router.get("/search", response_model=PaginatedArticles)
+async def search_articles(
+    q: str = Query(..., min_length=1),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(9, ge=1, le=50),
+    db: AsyncSession = Depends(get_db),
+):
+    from sqlalchemy import or_
+    keyword = f"%{q}%"
+    query = select(Article).where(
+        Article.is_published == True,
+        or_(
+            Article.title.ilike(keyword),
+            Article.summary.ilike(keyword),
+            Article.source_name.ilike(keyword),
+        )
+    )
+
+    total_query = select(func.count()).select_from(query.subquery())
+    total = (await db.execute(total_query)).scalar_one()
+
+    query = query.order_by(Article.created_at.desc())
+    query = query.offset((page - 1) * page_size).limit(page_size)
+    result = await db.execute(query)
+    items = result.scalars().all()
+
+    return PaginatedArticles(
+        items=items,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=(total + page_size - 1) // page_size,
+    )
 
 @router.get("/{slug}", response_model=ArticleOut)
 async def get_article(slug: str, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
