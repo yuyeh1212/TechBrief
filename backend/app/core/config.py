@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # OpenRouter
     OPENROUTER_API_KEY: str
     OPENROUTER_MODEL: str = "google/gemini-2.5-pro-preview"
-    OPENROUTER_FLASH_MODEL: str = "google/gemini-flash-1.5"
+    OPENROUTER_FLASH_MODEL: str = "google/gemini-2.0-flash-lite-001"
 
     # Resend
     RESEND_API_KEY: str
