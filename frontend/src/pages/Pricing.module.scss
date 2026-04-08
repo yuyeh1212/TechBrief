@@ -1,0 +1,363 @@
+.pricingPage {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+}
+
+/* ── Hero ── */
+.hero {
+  text-align: center;
+  padding: 72px 24px 48px;
+}
+
+.heroEyebrow {
+  font-family: var(--font-headline);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.heroTitle {
+  font-family: var(--font-headline);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+
+.accent {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSub {
+  font-size: 16px;
+  color: var(--on-surface-variant);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ── Plans ── */
+.plansSection {
+  padding: 0 24px 80px;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  align-items: stretch; /* 四欄等高 */
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.planCard {
+  position: relative;
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  will-change: transform;
+
+  &:hover {
+    border-color: var(--outline);
+    box-shadow: var(--glow-primary);
+    transform: scale(1.025);
+    z-index: 2;
+  }
+}
+
+.planCard.featured {
+  border-color: var(--primary-container);
+  background: linear-gradient(160deg, rgba(0, 212, 255, 0.06) 0%, var(--surface-container) 60%);
+  box-shadow: var(--glow-primary);
+
+  &:hover {
+    box-shadow: var(--glow-primary-hover);
+    transform: scale(1.03);
+  }
+}
+
+.planCard.comingSoon {
+  opacity: 0.65;
+  pointer-events: auto;
+
+  .ctaBtn {
+    cursor: default;
+  }
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gradient-primary);
+  color: #003642;
+  font-family: var(--font-headline);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badgeGhost {
+  background: var(--surface-highest);
+  color: var(--on-surface-variant);
+}
+
+/* Plan Header */
+.planHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planName {
+  font-family: var(--font-headline);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.planPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.priceAmount {
+  font-family: var(--font-headline);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--on-surface);
+
+  .featured & {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.pricePeriod {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+}
+
+.planDesc {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+/* CTA Button */
+.ctaBtn {
+  width: 100%;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-headline);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.cta_primary {
+  background: var(--gradient-primary);
+  color: #003642;
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--glow-primary-hover);
+    filter: brightness(1.05);
+  }
+}
+
+.cta_outline {
+  background: transparent;
+  color: var(--on-surface);
+  border: 1px solid var(--outline-variant) !important;
+
+  &:hover:not(:disabled) {
+    border-color: var(--primary) !important;
+    color: var(--primary);
+  }
+}
+
+.cta_ghost {
+  background: var(--surface-high);
+  color: var(--on-surface-variant);
+  border: 1px solid var(--outline-variant) !important;
+
+  &:hover:not(:disabled) {
+    background: var(--surface-highest);
+  }
+}
+
+/* Feature List */
+.featureList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--outline-variant);
+  margin-top: auto; /* 推到卡片底部，讓所有卡片內容對齊 */
+}
+
+.featureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--on-surface);
+  line-height: 1.5;
+}
+
+.featureExcluded {
+  color: var(--on-surface-variant);
+  opacity: 0.6;
+}
+
+.featureIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--primary);
+
+  .featureExcluded & {
+    color: var(--outline);
+  }
+}
+
+.featureNote {
+  font-size: 11px;
+  color: var(--outline);
+}
+
+/* ── FAQ ── */
+.faqSection {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.faqTitle {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  background: var(--surface-container);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--on-surface);
+  text-align: left;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--surface-high);
+  }
+}
+
+.faqChevron {
+  flex-shrink: 0;
+  color: var(--on-surface-variant);
+  transition: transform 0.2s;
+
+  .faqOpen & {
+    transform: rotate(180deg);
+  }
+}
+
+.faqAnswer {
+  padding: 0 20px 18px;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.7;
+  background: var(--surface-container);
+}
+
+/* ── Bottom CTA ── */
+.bottomCta {
+  text-align: center;
+  padding: 40px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bottomCtaText {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+}
+
+.bottomCtaLink {
+  font-family: var(--font-headline);
+  font-size: 15px;
+  color: var(--primary);
+  font-weight: 600;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.75;
+  }
+}

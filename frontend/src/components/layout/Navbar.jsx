@@ -122,6 +122,11 @@ export default function Navbar() {
           )}
         </nav>
 
+        {/* Pro CTA 按鈕 */}
+        <Link to="/pricing" className={styles.proBtn}>
+          Pro
+        </Link>
+
         {/* 搜尋 */}
         <button
           className={styles.searchIcon}

@@ -31,6 +31,7 @@ export default function Footer() {
 
           <div className={styles.linkGroup}>
             <span className={styles.groupTitle}>關於</span>
+            <Link to="/pricing">訂閱方案</Link>
             <Link to="/privacy">隱私政策</Link>
           </div>
         </div>
