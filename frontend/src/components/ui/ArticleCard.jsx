@@ -10,6 +10,7 @@ const CATEGORY_LABEL = {
   claude: "Claude",
   tech: "科技資訊",
   collaboration: "連動產出",
+  finance: "財經",
 };
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80";

@@ -13,6 +13,7 @@ const CATEGORY_LABEL = {
   claude: "Claude",
   tech: "科技資訊",
   collaboration: "連動產出",
+  finance: "財經",
 };
 
 const CATEGORY_PATH = {
@@ -22,6 +23,7 @@ const CATEGORY_PATH = {
   claude: "/ai/claude",
   tech: "/tech",
   collaboration: "/collaboration",
+  finance: "/finance",
 };
 
 const FALLBACK_IMAGE =
