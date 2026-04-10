@@ -201,10 +201,12 @@ export default function Navbar() {
         {/* 登入後的使用者資訊 */}
         {user && (
           <div className={styles.userMenu}>
-            {user.picture && (
-              <img src={user.picture} alt={user.name} className={styles.avatar} referrerPolicy="no-referrer" />
-            )}
-            <span className={styles.userName}>{user.name.split(" ")[0]}</span>
+            <Link to="/account" className={styles.avatarLink}>
+              {user.picture && (
+                <img src={user.picture} alt={user.name} className={styles.avatar} referrerPolicy="no-referrer" />
+              )}
+              <span className={styles.userName}>{user.name.split(" ")[0]}</span>
+            </Link>
             <button className={styles.logoutBtn} onClick={logout}>登出</button>
           </div>
         )}

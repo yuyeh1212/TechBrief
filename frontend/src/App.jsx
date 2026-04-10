@@ -10,6 +10,7 @@ import Privacy from "@/pages/Privacy";
 import SearchPage from "@/pages/SearchPage";
 import Pricing from "@/pages/Pricing";
 import FinancePage from "@/pages/FinancePage";
+import AccountPage from "@/pages/AccountPage";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/finance" element={<FinancePage />} />
+          <Route path="/account" element={<AccountPage />} />
 
           {/* Unsubscribe 頁面（簡易） */}
           <Route path="/unsubscribe" element={<UnsubscribePage />} />

@@ -1,0 +1,248 @@
+.page {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── 個人資訊卡片 ── */
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.avatarWrap {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  object-fit: cover;
+}
+
+.avatarFallback {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #003642;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+  font-family: var(--font-headline);
+}
+
+.email {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.planBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 2px 8px;
+  width: fit-content;
+}
+
+/* ── Section ── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+/* ── 方案卡片 ── */
+.planCard {
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.planHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.planName {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-headline);
+}
+
+.planPrice {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--on-surface-variant);
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+}
+
+.upgradeBtn {
+  display: inline-block;
+  background: var(--gradient-primary);
+  color: #003642;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+/* ── 帳號設定卡片 ── */
+.actionsCard {
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  gap: 16px;
+}
+
+.actionLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0 0 4px;
+}
+
+.actionDesc {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.actionTag {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0 28px;
+}
+
+.logoutBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  color: #ff6b6b;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 80, 80, 0.1);
+    border-color: rgba(255, 80, 80, 0.7);
+  }
+}
+
+/* ── RWD ── */
+@media (max-width: 600px) {
+  .profileCard {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .profileInfo {
+    align-items: center;
+  }
+
+  .actionRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .divider {
+    margin: 0 20px;
+  }
+}
