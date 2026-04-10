@@ -49,10 +49,8 @@ export default function Navbar() {
     }
   }, [user]);
 
-  // 初始化並渲染 Google 登入按鈕
+  // 初始化並渲染 Google 登入按鈕（只需執行一次）
   useEffect(() => {
-    if (user) return;
-
     const initGoogleBtn = () => {
       if (!window.google?.accounts?.id) return;
       window.google.accounts.id.initialize({
@@ -60,7 +58,6 @@ export default function Navbar() {
         callback: async (response) => {
           try {
             await loginWithGoogle(response.credential);
-            // 登入成功後立即取消 GIS overlay
             window.google?.accounts?.id?.cancel();
           } catch (e) {
             console.error("Google 登入失敗", e);
@@ -86,7 +83,7 @@ export default function Navbar() {
       window.addEventListener("load", initGoogleBtn);
       return () => window.removeEventListener("load", initGoogleBtn);
     }
-  }, [user, loginWithGoogle]);
+  }, [loginWithGoogle]); // 移除 user 依賴，只初始化一次
 
   useEffect(() => {
     setMobileOpen(false);
@@ -194,8 +191,15 @@ export default function Navbar() {
           </Link>
         )}
 
-        {/* 登入/使用者區塊 */}
-        {user ? (
+        {/* Google 登入按鈕：永遠留在 DOM，登入後用 CSS 隱藏 */}
+        <div
+          id="google-signin-btn"
+          className={styles.googleSigninBtn}
+          style={{ display: user ? "none" : "block" }}
+        />
+
+        {/* 登入後的使用者資訊 */}
+        {user && (
           <div className={styles.userMenu}>
             {user.picture && (
               <img src={user.picture} alt={user.name} className={styles.avatar} referrerPolicy="no-referrer" />
@@ -203,8 +207,6 @@ export default function Navbar() {
             <span className={styles.userName}>{user.name.split(" ")[0]}</span>
             <button className={styles.logoutBtn} onClick={logout}>登出</button>
           </div>
-        ) : (
-          <div id="google-signin-btn" className={styles.googleSigninBtn} />
         )}
 
         {/* 搜尋 */}
