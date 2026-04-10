@@ -24,7 +24,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
-  const { user, logout, loginWithGoogle } = useAuth();
+  const { user, logout, loginWithGoogle, isPro, isMini } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [financeOpen, setFinanceOpen] = useState(false);
@@ -184,10 +184,10 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Pro CTA 按鈕 */}
-        {!user && (
+        {/* 訂閱按鈕：Pro/Max 以外的使用者才顯示 */}
+        {!isPro && (
           <Link to="/pricing" className={styles.proBtn}>
-            Pro
+            {isMini ? "升級 Pro" : "訂閱方案"}
           </Link>
         )}
 
