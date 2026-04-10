@@ -42,6 +42,13 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // 登入後取消 GIS 殘留的 One-Tap overlay
+  useEffect(() => {
+    if (user) {
+      window.google?.accounts?.id?.cancel();
+    }
+  }, [user]);
+
   // 初始化並渲染 Google 登入按鈕
   useEffect(() => {
     if (user) return;
@@ -53,6 +60,8 @@ export default function Navbar() {
         callback: async (response) => {
           try {
             await loginWithGoogle(response.credential);
+            // 登入成功後立即取消 GIS overlay
+            window.google?.accounts?.id?.cancel();
           } catch (e) {
             console.error("Google 登入失敗", e);
           }
