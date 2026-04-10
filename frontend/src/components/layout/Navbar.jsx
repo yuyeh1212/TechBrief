@@ -42,17 +42,42 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // 掛載 Google callback
+  // 初始化並渲染 Google 登入按鈕
   useEffect(() => {
-    window.handleGoogleLogin = async (response) => {
-      try {
-        await loginWithGoogle(response.credential);
-      } catch (e) {
-        console.error("Google 登入失敗", e);
+    if (user) return;
+
+    const initGoogleBtn = () => {
+      if (!window.google?.accounts?.id) return;
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: async (response) => {
+          try {
+            await loginWithGoogle(response.credential);
+          } catch (e) {
+            console.error("Google 登入失敗", e);
+          }
+        },
+      });
+      const btn = document.getElementById("google-signin-btn");
+      if (btn) {
+        window.google.accounts.id.renderButton(btn, {
+          theme: "outline",
+          size: "medium",
+          shape: "pill",
+          text: "signin_with",
+          locale: "zh-TW",
+        });
       }
     };
-    return () => { delete window.handleGoogleLogin; };
-  }, [loginWithGoogle]);
+
+    // 若腳本已載入直接執行，否則等 load 事件
+    if (window.google?.accounts?.id) {
+      initGoogleBtn();
+    } else {
+      window.addEventListener("load", initGoogleBtn);
+      return () => window.removeEventListener("load", initGoogleBtn);
+    }
+  }, [user, loginWithGoogle]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -160,15 +185,6 @@ export default function Navbar() {
           </Link>
         )}
 
-        {/* Google callback 設定（常駐） */}
-        <div
-          id="g_id_onload"
-          data-client_id={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-          data-callback="handleGoogleLogin"
-          data-auto_prompt="false"
-          style={{ display: "none" }}
-        />
-
         {/* 登入/使用者區塊 */}
         {user ? (
           <div className={styles.userMenu}>
@@ -179,15 +195,7 @@ export default function Navbar() {
             <button className={styles.logoutBtn} onClick={logout}>登出</button>
           </div>
         ) : (
-          <div
-            className="g_id_signin"
-            data-type="standard"
-            data-shape="pill"
-            data-theme="outline"
-            data-text="signin_with"
-            data-size="medium"
-            data-locale="zh-TW"
-          />
+          <div id="google-signin-btn" className={styles.googleSigninBtn} />
         )}
 
         {/* 搜尋 */}

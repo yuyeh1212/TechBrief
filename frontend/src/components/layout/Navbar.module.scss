@@ -311,6 +311,12 @@
   }
 }
 
+.googleSigninBtn {
+  flex-shrink: 0;
+
+  @media (max-width: 768px) { display: none; }
+}
+
 .userMenu {
   display: flex;
   align-items: center;
