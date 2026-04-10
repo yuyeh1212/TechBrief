@@ -160,6 +160,15 @@ export default function Navbar() {
           </Link>
         )}
 
+        {/* Google callback 設定（常駐） */}
+        <div
+          id="g_id_onload"
+          data-client_id={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+          data-callback="handleGoogleLogin"
+          data-auto_prompt="false"
+          style={{ display: "none" }}
+        />
+
         {/* 登入/使用者區塊 */}
         {user ? (
           <div className={styles.userMenu}>
@@ -171,10 +180,13 @@ export default function Navbar() {
           </div>
         ) : (
           <div
-            id="g_id_onload"
-            data-client_id={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-            data-callback="handleGoogleLogin"
-            data-auto_prompt="false"
+            className="g_id_signin"
+            data-type="standard"
+            data-shape="pill"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="medium"
+            data-locale="zh-TW"
           />
         )}
 
