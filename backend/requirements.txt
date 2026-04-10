@@ -18,3 +18,4 @@ python-multipart==0.0.19
 Pillow==10.4.0
 aiofiles==24.1.0
 youtube-transcript-api==0.6.3
+google-auth==2.37.0

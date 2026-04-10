@@ -35,6 +35,14 @@ class Settings(BaseSettings):
     # Unsplash
     UNSPLASH_ACCESS_KEY: str = ""
 
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = ""
+
+    # JWT
+    JWT_SECRET_KEY: str = "change-me-in-production"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_HOURS: int = 168  # 7 天
+
     # Scheduler
     NEWS_FETCH_HOUR: int = 10
     NEWS_FETCH_MINUTE: int = 0

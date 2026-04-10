@@ -7,6 +7,13 @@ const api = axios.create({
   timeout: 15000,
 });
 
+// 自動帶入 JWT token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("tb_token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 // 文章
 export const getArticles = (params = {}) =>
   api.get("/articles", { params }).then((r) => r.data);

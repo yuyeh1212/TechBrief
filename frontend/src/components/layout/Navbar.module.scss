@@ -311,6 +311,50 @@
   }
 }
 
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) { display: none; }
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--outline-variant);
+}
+
+.userName {
+  font-family: var(--font-headline);
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logoutBtn {
+  font-family: var(--font-headline);
+  font-size: 11px;
+  color: var(--on-surface-variant);
+  background: none;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+
+  &:hover {
+    color: var(--error);
+    border-color: var(--error);
+  }
+}
+
 .searchIcon {
   background: transparent;
   border: none;

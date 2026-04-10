@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./Navbar.module.scss";
 
 const AI_SUBMENU = [
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
+  const { user, logout, loginWithGoogle } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [financeOpen, setFinanceOpen] = useState(false);
@@ -39,6 +41,18 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // 掛載 Google callback
+  useEffect(() => {
+    window.handleGoogleLogin = async (response) => {
+      try {
+        await loginWithGoogle(response.credential);
+      } catch (e) {
+        console.error("Google 登入失敗", e);
+      }
+    };
+    return () => { delete window.handleGoogleLogin; };
+  }, [loginWithGoogle]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -140,9 +154,29 @@ export default function Navbar() {
         </nav>
 
         {/* Pro CTA 按鈕 */}
-        <Link to="/pricing" className={styles.proBtn}>
-          Pro
-        </Link>
+        {!user && (
+          <Link to="/pricing" className={styles.proBtn}>
+            Pro
+          </Link>
+        )}
+
+        {/* 登入/使用者區塊 */}
+        {user ? (
+          <div className={styles.userMenu}>
+            {user.picture && (
+              <img src={user.picture} alt={user.name} className={styles.avatar} referrerPolicy="no-referrer" />
+            )}
+            <span className={styles.userName}>{user.name.split(" ")[0]}</span>
+            <button className={styles.logoutBtn} onClick={logout}>登出</button>
+          </div>
+        ) : (
+          <div
+            id="g_id_onload"
+            data-client_id={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+            data-callback="handleGoogleLogin"
+            data-auto_prompt="false"
+          />
+        )}
 
         {/* 搜尋 */}
         <button
