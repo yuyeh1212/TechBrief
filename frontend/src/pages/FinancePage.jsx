@@ -22,6 +22,8 @@ export default function FinancePage() {
   useEffect(() => {
     if (tabParam && ["news", "reports", "stocks"].includes(tabParam)) {
       setActiveTab(tabParam);
+    } else if (!tabParam) {
+      setActiveTab("news");
     }
   }, [tabParam]);
 
