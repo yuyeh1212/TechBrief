@@ -113,7 +113,7 @@ export default function AccountPage() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
                         d="M5 13l4 4L19 7"
-                        stroke={planInfo.color}
+                        stroke="var(--primary-container)"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
