@@ -75,7 +75,7 @@ export default function FinancePage() {
   return (
     <>
       <Helmet>
-        <title>財經專區 | TechBrief 科技快訊</title>
+        <title>TechBrief | 財經</title>
         <meta name="description" content="最新財經新聞、財報分析與科技股票動態，Pro 方案解鎖股票監控功能。" />
       </Helmet>
 

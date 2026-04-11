@@ -43,7 +43,7 @@ export default function AccountPage() {
   return (
     <>
       <Helmet>
-        <title>我的帳號 — TechBrief 科技快訊</title>
+        <title>TechBrief | 我的帳號</title>
       </Helmet>
 
       <main className={styles.page}>

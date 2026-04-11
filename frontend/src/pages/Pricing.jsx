@@ -113,7 +113,7 @@ export default function Pricing() {
   return (
     <>
       <Helmet>
-        <title>方案定價 | TechBrief 科技快訊</title>
+        <title>TechBrief | 訂閱方案</title>
         <meta
           name="description"
           content="選擇最適合你的 TechBrief 方案，從免費到專業，解鎖完整 AI 科技財經分析功能。"
