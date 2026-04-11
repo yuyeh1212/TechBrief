@@ -5,10 +5,10 @@ import { useAuth } from "@/context/AuthContext";
 import styles from "./AccountPage.module.scss";
 
 const PLAN_LABELS = {
-  free: { name: "免費版", color: "#aaa", badge: "FREE" },
-  mini: { name: "Mini", color: "#4fc3f7", badge: "MINI" },
-  pro: { name: "Pro", color: "#00e5ff", badge: "PRO" },
-  max: { name: "Max", color: "#ff9800", badge: "MAX" },
+  free: { name: "免費版", color: "#aaa",    badge: "FREE" },
+  mini: { name: "Mini",  color: "#4fc3f7", badge: "MINI" },
+  pro:  { name: "Pro",   color: "#00e5ff", badge: "PRO"  },
+  max:  { name: "Max",   color: "#f59e0b", badge: "MAX"  },
 };
 
 const PLAN_FEATURES = {
