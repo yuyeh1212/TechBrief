@@ -4,9 +4,9 @@ import { useAuth } from "@/context/AuthContext";
 import styles from "./Navbar.module.scss";
 
 const AI_SUBMENU = [
-  { label: "GPT", to: "/ai/gpt", desc: "OpenAI" },
-  { label: "Gemini", to: "/ai/gemini", desc: "Google" },
-  { label: "Claude", to: "/ai/claude", desc: "Anthropic" },
+  { label: "GPT",    to: "/ai?tab=gpt",    desc: "OpenAI"    },
+  { label: "Gemini", to: "/ai?tab=gemini", desc: "Google"    },
+  { label: "Claude", to: "/ai?tab=claude", desc: "Anthropic" },
 ];
 
 const FINANCE_SUBMENU = [
@@ -16,10 +16,10 @@ const FINANCE_SUBMENU = [
 ];
 
 const NAV_ITEMS = [
-  { label: "HOME", to: "/", exact: true },
-  { label: "人工智慧 (AI)", to: "/ai", submenu: AI_SUBMENU },
-  { label: "工具整合 (Collaboration)", to: "/collaboration" },
-  { label: "科技資訊 (TECH NEWS)", to: "/tech" },
+  { label: "首頁", to: "/", exact: true },
+  { label: "人工智慧", to: "/ai", submenu: AI_SUBMENU },
+  { label: "工具整合", to: "/collaboration" },
+  { label: "科技資訊", to: "/tech" },
   { label: "財經", to: "/finance", submenu: FINANCE_SUBMENU },
 ];
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -11,6 +11,7 @@ import SearchPage from "@/pages/SearchPage";
 import Pricing from "@/pages/Pricing";
 import FinancePage from "@/pages/FinancePage";
 import AccountPage from "@/pages/AccountPage";
+import AiPage from "@/pages/AiPage";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
@@ -22,10 +23,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
 
-          {/* AI 主頁 */}
-          <Route path="/ai" element={<CategoryPage pageKey="ai" />} />
-          {/* AI 子頁 */}
-          <Route path="/ai/:sub" element={<CategoryPage pageKey="ai" />} />
+          {/* AI 主頁（含 tab 導覽） */}
+          <Route path="/ai" element={<AiPage />} />
+          {/* AI 子頁：導向 AiPage 並帶 tab 參數 */}
+          <Route path="/ai/:sub" element={<AiSubRedirect />} />
 
           <Route
             path="/collaboration"
@@ -111,4 +112,10 @@ function UnsubscribePage() {
       </div>
     </main>
   );
+}
+
+// /ai/gpt → /ai?tab=gpt
+function AiSubRedirect() {
+  const { sub } = useParams();
+  return <Navigate to={`/ai?tab=${sub}`} replace />;
 }
