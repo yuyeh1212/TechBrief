@@ -318,24 +318,25 @@
 }
 
 .userMenu {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  position: relative;
   flex-shrink: 0;
 
   @media (max-width: 768px) { display: none; }
 }
 
-.avatarLink {
+.userTrigger {
   display: flex;
   align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  opacity: 0.9;
-  transition: opacity 0.2s;
+  gap: 7px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
 
   &:hover {
-    opacity: 1;
+    background: rgba(255, 255, 255, 0.06);
   }
 }
 
@@ -345,6 +346,20 @@
   border-radius: 50%;
   object-fit: cover;
   border: 1.5px solid var(--outline-variant);
+}
+
+.avatarFallback {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #003642;
+  flex-shrink: 0;
 }
 
 .userName {
@@ -357,20 +372,79 @@
   white-space: nowrap;
 }
 
-.logoutBtn {
-  font-family: var(--font-headline);
+// 下拉選單
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  z-index: 200;
+  animation: dropdownIn 0.15s ease;
+}
+
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.userDropdownHeader {
+  padding: 14px 16px 12px;
+
+  p { margin: 0; }
+}
+
+.dropdownName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-bottom: 2px !important;
+}
+
+.dropdownEmail {
   font-size: 11px;
   color: var(--on-surface-variant);
+}
+
+.userDropdownDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0;
+}
+
+.userDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  font-size: 13px;
+  color: var(--on-surface-variant);
   background: none;
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-sm);
-  padding: 4px 10px;
+  border: none;
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--font-body);
 
   &:hover {
-    color: var(--error);
-    border-color: var(--error);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--on-surface);
+  }
+
+  svg { flex-shrink: 0; opacity: 0.7; }
+}
+
+.userDropdownLogout {
+  &:hover {
+    background: rgba(255, 80, 80, 0.08);
+    color: #ff6b6b;
+
+    svg { opacity: 1; color: #ff6b6b; }
   }
 }
 

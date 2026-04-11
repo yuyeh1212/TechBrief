@@ -28,11 +28,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [financeOpen, setFinanceOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileAiOpen, setMobileAiOpen] = useState(false);
   const [mobileFinanceOpen, setMobileFinanceOpen] = useState(false);
   const aiRef = useRef(null);
   const financeRef = useRef(null);
+  const userMenuRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -90,11 +92,12 @@ export default function Navbar() {
     setAiOpen(false);
   }, [location.pathname]);
 
-  // 點外面關閉 submenu
+  // 點外面關閉 submenu 和 userMenu
   useEffect(() => {
     const handler = (e) => {
       if (aiRef.current && !aiRef.current.contains(e.target)) setAiOpen(false);
       if (financeRef.current && !financeRef.current.contains(e.target)) setFinanceOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -198,16 +201,63 @@ export default function Navbar() {
           style={{ display: user ? "none" : "block" }}
         />
 
-        {/* 登入後的使用者資訊 */}
+        {/* 登入後的使用者下拉選單 */}
         {user && (
-          <div className={styles.userMenu}>
-            <Link to="/account" className={styles.avatarLink}>
-              {user.picture && (
+          <div
+            className={styles.userMenu}
+            ref={userMenuRef}
+          >
+            <button
+              className={styles.userTrigger}
+              onClick={() => setUserMenuOpen((o) => !o)}
+              aria-label="帳號選單"
+            >
+              {user.picture ? (
                 <img src={user.picture} alt={user.name} className={styles.avatar} referrerPolicy="no-referrer" />
+              ) : (
+                <div className={styles.avatarFallback}>{user.name?.charAt(0)}</div>
               )}
               <span className={styles.userName}>{user.name.split(" ")[0]}</span>
-            </Link>
-            <button className={styles.logoutBtn} onClick={logout}>登出</button>
+              <svg
+                width="12" height="12" viewBox="0 0 12 12" fill="none"
+                className={`${styles.chevron} ${userMenuOpen ? styles.open : ""}`}
+              >
+                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            {userMenuOpen && (
+              <div className={styles.userDropdown}>
+                <div className={styles.userDropdownHeader}>
+                  <p className={styles.dropdownName}>{user.name}</p>
+                  <p className={styles.dropdownEmail}>{user.email}</p>
+                </div>
+                <div className={styles.userDropdownDivider} />
+                <Link to="/account" className={styles.userDropdownItem} onClick={() => setUserMenuOpen(false)}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  我的帳號
+                </Link>
+                <Link to="/pricing" className={styles.userDropdownItem} onClick={() => setUserMenuOpen(false)}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                  </svg>
+                  訂閱方案
+                </Link>
+                <div className={styles.userDropdownDivider} />
+                <button
+                  className={`${styles.userDropdownItem} ${styles.userDropdownLogout}`}
+                  onClick={() => { logout(); setUserMenuOpen(false); }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  登出
+                </button>
+              </div>
+            )}
           </div>
         )}
 
