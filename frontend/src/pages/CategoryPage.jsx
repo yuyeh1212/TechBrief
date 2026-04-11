@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { getArticles } from "@/api";
 import ArticleCard from "@/components/ui/ArticleCard";
 import SubscribeBar from "@/components/ui/SubscribeBar";
@@ -8,31 +9,37 @@ import styles from "./CategoryPage.module.scss";
 const PAGE_META = {
   ai: {
     title: "人工智慧 (AI)",
+    tabTitle: "人工智慧",
     desc: "深度解析 AI 領域最新動態，涵蓋大型語言模型、生成式 AI 與產業應用",
     category: "ai",
   },
   gpt: {
     title: "GPT 專區",
+    tabTitle: "GPT",
     desc: "OpenAI GPT 系列最新發展、應用場景與使用技巧",
     category: "gpt",
   },
   gemini: {
     title: "Gemini 專區",
+    tabTitle: "Gemini",
     desc: "Google Gemini 模型更新、Workspace 整合與 AI Studio 應用",
     category: "gemini",
   },
   claude: {
     title: "Claude 專區",
+    tabTitle: "Claude",
     desc: "Anthropic Claude 最新版本、能力評測與 API 開發實踐",
     category: "claude",
   },
   tech: {
     title: "科技資訊 (TECH NEWS)",
+    tabTitle: "科技資訊",
     desc: "涵蓋半導體、軟體、新創、產業趨勢等全方位科技資訊",
     category: "tech",
   },
   collaboration: {
     title: "連動產出 (Collaboration)",
+    tabTitle: "連動產出",
     desc: "自動化工作流、API 整合、n8n 與無程式碼工具的應用實踐",
     category: "collaboration",
   },
@@ -105,6 +112,9 @@ export default function CategoryPage({ pageKey }) {
 
   return (
     <main className={styles.main}>
+      <Helmet>
+        <title>TechBrief | {meta.tabTitle}</title>
+      </Helmet>
       <div className={styles.pageHeader}>
         <div className={styles.headerInner}>
           <span className={styles.label}>{meta.category.toUpperCase()}</span>

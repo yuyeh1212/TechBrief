@@ -1,8 +1,12 @@
+import { Helmet } from "react-helmet-async";
 import styles from "./Privacy.module.scss";
 
 export default function Privacy() {
   return (
     <main className={styles.main}>
+      <Helmet>
+        <title>TechBrief | 隱私政策</title>
+      </Helmet>
       <div className={styles.container}>
         <header className={styles.header}>
           <span className={styles.label}>PRIVACY POLICY</span>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
 import { getArticle, getLatestArticles } from "@/api";
@@ -89,6 +90,9 @@ export default function ArticlePage() {
 
   return (
     <main className={styles.main}>
+      <Helmet>
+        <title>{article.title ? `${article.title} | TechBrief` : "TechBrief 科技快訊"}</title>
+      </Helmet>
       {/* Hero Image */}
       <div className={styles.heroImage}>
         <img

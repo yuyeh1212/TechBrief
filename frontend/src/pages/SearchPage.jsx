@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { searchArticles } from "@/api";
 import ArticleCard from "@/components/ui/ArticleCard";
 import styles from "./SearchPage.module.scss";
@@ -70,6 +71,9 @@ export default function SearchPage() {
 
   return (
     <main className={styles.main}>
+      <Helmet>
+        <title>TechBrief | 搜尋</title>
+      </Helmet>
       <div className={styles.header}>
         <div className={styles.headerInner}>
           <h1 className={styles.title}>搜尋文章</h1>

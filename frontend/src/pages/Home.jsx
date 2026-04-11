@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { getLatestArticles, getArticles } from "@/api";
 import ArticleCard from "@/components/ui/ArticleCard";
 import SubscribeBar from "@/components/ui/SubscribeBar";
@@ -27,6 +28,9 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
+      <Helmet>
+        <title>TechBrief 科技快訊</title>
+      </Helmet>
       {/* Hero */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
