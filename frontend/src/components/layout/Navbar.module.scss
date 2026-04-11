@@ -346,6 +346,17 @@
   }
 }
 
+.userChevron {
+  color: var(--primary-container);
+  transition: transform 0.2s;
+  opacity: 0.9;
+  flex-shrink: 0;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
 .avatar {
   width: 28px;
   height: 28px;

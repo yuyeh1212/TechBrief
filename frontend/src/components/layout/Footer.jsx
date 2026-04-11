@@ -18,7 +18,7 @@ export default function Footer() {
             <span className={styles.groupTitle}>頁面</span>
             <Link to="/">首頁 (HOME)</Link>
             <Link to="/ai">人工智慧 (AI)</Link>
-            <Link to="/collaboration">連動產出 (Collaboration)</Link>
+            <Link to="/collaboration">工具整合 (Collaboration)</Link>
             <Link to="/tech">科技資訊 (TECH NEWS)</Link>
           </div>
 

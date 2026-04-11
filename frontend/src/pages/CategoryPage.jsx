@@ -38,8 +38,8 @@ const PAGE_META = {
     category: "tech",
   },
   collaboration: {
-    title: "連動產出 (Collaboration)",
-    tabTitle: "連動產出",
+    title: "工具整合 (Collaboration)",
+    tabTitle: "工具整合",
     desc: "自動化工作流、API 整合、n8n 與無程式碼工具的應用實踐",
     category: "collaboration",
   },

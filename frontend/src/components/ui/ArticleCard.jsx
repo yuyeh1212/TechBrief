@@ -9,7 +9,7 @@ const CATEGORY_LABEL = {
   gemini: "Gemini",
   claude: "Claude",
   tech: "科技資訊",
-  collaboration: "連動產出",
+  collaboration: "工具整合",
   finance: "財經",
 };
 

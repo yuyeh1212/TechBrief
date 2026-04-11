@@ -18,7 +18,7 @@ const FINANCE_SUBMENU = [
 const NAV_ITEMS = [
   { label: "HOME", to: "/", exact: true },
   { label: "人工智慧 (AI)", to: "/ai", submenu: AI_SUBMENU },
-  { label: "連動產出 (Collaboration)", to: "/collaboration" },
+  { label: "工具整合 (Collaboration)", to: "/collaboration" },
   { label: "科技資訊 (TECH NEWS)", to: "/tech" },
   { label: "財經", to: "/finance", submenu: FINANCE_SUBMENU },
 ];
@@ -192,10 +192,10 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* 訂閱按鈕：Pro/Max 以外的使用者才顯示 */}
-        {!isPro && (
+        {/* 訂閱按鈕：未登入才顯示，登入後改用下拉選單 */}
+        {!user && (
           <Link to="/pricing" className={styles.proBtn}>
-            {isMini ? "升級 Pro" : "訂閱方案"}
+            訂閱方案
           </Link>
         )}
 
@@ -225,7 +225,7 @@ export default function Navbar() {
               <span className={styles.userName}>{user.name.split(" ")[0]}</span>
               <svg
                 width="12" height="12" viewBox="0 0 12 12" fill="none"
-                className={`${styles.chevron} ${userMenuOpen ? styles.open : ""}`}
+                className={`${styles.userChevron} ${userMenuOpen ? styles.open : ""}`}
               >
                 <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
