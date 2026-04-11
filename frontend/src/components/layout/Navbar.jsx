@@ -53,6 +53,19 @@ export default function Navbar() {
 
   // 初始化並渲染 Google 登入按鈕（只需執行一次）
   useEffect(() => {
+    const renderBtn = (id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        window.google.accounts.id.renderButton(el, {
+          theme: "outline",
+          size: "medium",
+          shape: "pill",
+          text: "signin_with",
+          locale: "zh-TW",
+        });
+      }
+    };
+
     const initGoogleBtn = () => {
       if (!window.google?.accounts?.id) return;
       window.google.accounts.id.initialize({
@@ -66,16 +79,8 @@ export default function Navbar() {
           }
         },
       });
-      const btn = document.getElementById("google-signin-btn");
-      if (btn) {
-        window.google.accounts.id.renderButton(btn, {
-          theme: "outline",
-          size: "medium",
-          shape: "pill",
-          text: "signin_with",
-          locale: "zh-TW",
-        });
-      }
+      renderBtn("google-signin-btn");
+      renderBtn("google-signin-btn-mobile");
     };
 
     // 若腳本已載入直接執行，否則等 load 事件
@@ -194,7 +199,7 @@ export default function Navbar() {
           </Link>
         )}
 
-        {/* Google 登入按鈕：永遠留在 DOM，登入後用 CSS 隱藏 */}
+        {/* Google 登入按鈕（桌面）：永遠留在 DOM，登入後用 CSS 隱藏 */}
         <div
           id="google-signin-btn"
           className={styles.googleSigninBtn}
@@ -354,6 +359,46 @@ export default function Navbar() {
               </NavLink>
             );
           })}
+
+          {/* 手機版帳號區塊 */}
+          <div className={styles.mobileDivider} />
+
+          {user ? (
+            <div className={styles.mobileUserSection}>
+              <div className={styles.mobileUserInfo}>
+                {user.picture && (
+                  <img src={user.picture} alt={user.name} className={styles.mobileAvatar} referrerPolicy="no-referrer" />
+                )}
+                <div>
+                  <p className={styles.mobileUserName}>{user.name}</p>
+                  <p className={styles.mobileUserEmail}>{user.email}</p>
+                </div>
+              </div>
+              <Link to="/account" className={styles.mobileNavLink} onClick={() => setMobileOpen(false)}>
+                我的帳號
+              </Link>
+              {!isPro && (
+                <Link to="/pricing" className={styles.mobileNavLink} onClick={() => setMobileOpen(false)}>
+                  {isMini ? "升級 Pro" : "訂閱方案"}
+                </Link>
+              )}
+              <button
+                className={`${styles.mobileNavLink} ${styles.mobileLogout}`}
+                onClick={() => { logout(); setMobileOpen(false); }}
+              >
+                登出
+              </button>
+            </div>
+          ) : (
+            <div className={styles.mobileUserSection}>
+              <Link to="/pricing" className={styles.mobileNavLink} onClick={() => setMobileOpen(false)}>
+                訂閱方案
+              </Link>
+              <div className={styles.mobileGoogleBtn}>
+                <div id="google-signin-btn-mobile" />
+              </div>
+            </div>
+          )}
         </nav>
       )}
     </header>

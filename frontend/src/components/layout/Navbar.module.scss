@@ -25,6 +25,9 @@
   display: flex;
   align-items: center;
   gap: 40px;
+
+  @media (max-width: 1100px) { gap: 20px; }
+  @media (max-width: 900px)  { gap: 12px; padding: 0 16px; }
 }
 
 .logo {
@@ -85,6 +88,9 @@
     color 0.2s,
     background 0.2s;
   white-space: nowrap;
+
+  @media (max-width: 1100px) { padding: 8px 10px; }
+  @media (max-width: 960px)  { padding: 8px 8px; font-size: 11px; }
 
   &:hover {
     color: var(--on-surface);
@@ -156,7 +162,7 @@
   gap: 8px;
   position: relative;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     display: none;
   }
 }
@@ -370,6 +376,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (max-width: 960px) { display: none; }
 }
 
 // 下拉選單
@@ -462,4 +470,61 @@
   &:hover {
     color: var(--primary);
   }
+}
+
+// ── 手機版帳號區塊 ──
+.mobileDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 8px 12px;
+}
+
+.mobileUserSection {
+  padding: 4px 0;
+}
+
+.mobileUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 8px;
+}
+
+.mobileAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--outline-variant);
+  flex-shrink: 0;
+}
+
+.mobileUserName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0 0 2px;
+}
+
+.mobileUserEmail {
+  font-size: 11px;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.mobileLogout {
+  width: 100%;
+  text-align: left;
+  color: #ff6b6b !important;
+
+  &:hover {
+    background: rgba(255, 80, 80, 0.08) !important;
+  }
+}
+
+.mobileGoogleBtn {
+  padding: 8px 12px 4px;
+
+  // GIS 按鈕寬度自適應
+  > div { width: 100%; }
 }
