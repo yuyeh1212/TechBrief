@@ -103,9 +103,9 @@ async def create_order(
         "TotalAmount":       str(plan_info["amount"]),
         "TradeDesc":         urllib.parse.quote(plan_info["name"]),
         "ItemName":          plan_info["name"],
-        "ReturnURL":         f"{settings.FRONTEND_URL}/api/payment/notify",
+        "ReturnURL":         f"{settings.BACKEND_URL}/api/payment/notify",
         "ClientBackURL":     f"{settings.FRONTEND_URL}/payment/result",
-        "OrderResultURL":    f"{settings.FRONTEND_URL}/api/payment/return",
+        "OrderResultURL":    f"{settings.BACKEND_URL}/api/payment/return",
         "ChoosePayment":     "Credit",
         "EncryptType":       "1",
     }

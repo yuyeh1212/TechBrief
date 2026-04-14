@@ -55,6 +55,7 @@ class Settings(BaseSettings):
     ECPAY_API_URL: str = "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5"
     # 正式環境改為: https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5
     FRONTEND_URL: str = "https://techbrief.zeabur.app"
+    BACKEND_URL: str = "https://api-techbrief.zeabur.app"
 
     class Config:
         env_file = ".env"
