@@ -3,7 +3,8 @@ import urllib.parse
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from pydantic import BaseModel
 
 from app.core.config import settings
@@ -73,7 +74,7 @@ class CreateOrderRequest(BaseModel):
 async def create_order(
     body: CreateOrderRequest,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     """建立訂單並回傳 ECPay 表單 HTML"""
     plan_key = body.plan.lower()
@@ -92,7 +93,7 @@ async def create_order(
         status=OrderStatus.PENDING,
     )
     db.add(order)
-    db.commit()
+    await db.flush()  # 確保寫入但不關閉 session
 
     # 組 ECPay 參數
     params = {
@@ -115,12 +116,12 @@ async def create_order(
 
 
 @router.post("/notify")
-async def ecpay_notify(request: Request, db: Session = Depends(get_db)):
+async def ecpay_notify(request: Request, db: AsyncSession = Depends(get_db)):
     """ECPay 伺服器端 callback（付款結果通知）"""
     form = await request.form()
     data = dict(form)
 
-    # 取出並移除 CheckMacValue 驗證
+    # 取出並移除 CheckMacValue 再驗證
     received_mac = data.pop("CheckMacValue", "")
     expected_mac = _generate_check_mac_value(data)
 
@@ -131,7 +132,8 @@ async def ecpay_notify(request: Request, db: Session = Depends(get_db)):
     rtn_code = data.get("RtnCode", "0")
     ecpay_trade_no = data.get("TradeNo", "")
 
-    order = db.query(Order).filter(Order.trade_no == trade_no).first()
+    result = await db.execute(select(Order).where(Order.trade_no == trade_no))
+    order = result.scalar_one_or_none()
     if not order:
         return HTMLResponse("0|OrderNotFound", status_code=200)
 
@@ -141,23 +143,20 @@ async def ecpay_notify(request: Request, db: Session = Depends(get_db)):
         order.paid_at = datetime.now(timezone.utc)
 
         # 更新用戶方案
-        user = db.query(User).filter(User.id == order.user_id).first()
+        user_result = await db.execute(select(User).where(User.id == order.user_id))
+        user = user_result.scalar_one_or_none()
         if user:
             user.plan = PLAN_ENUM.get(order.plan, UserPlan.FREE)
-
-        db.commit()
     else:
         order.status = OrderStatus.FAILED
-        db.commit()
 
+    await db.flush()
     return HTMLResponse("1|OK", status_code=200)
 
 
 @router.post("/return")
 async def ecpay_return(request: Request):
-    """ECPay 付款完成後瀏覽器端跳轉（OrderResultURL）
-    接收 ECPay POST 表單，重新導向前端付款結果頁。
-    """
+    """ECPay 付款完成後瀏覽器端跳轉（OrderResultURL）"""
     form = await request.form()
     data = dict(form)
     trade_no = data.get("MerchantTradeNo", "")
@@ -173,13 +172,16 @@ async def ecpay_return(request: Request):
 async def get_order_status(
     trade_no: str,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     """查詢訂單狀態（前端付款結果頁使用）"""
-    order = db.query(Order).filter(
-        Order.trade_no == trade_no,
-        Order.user_id == current_user.id,
-    ).first()
+    result = await db.execute(
+        select(Order).where(
+            Order.trade_no == trade_no,
+            Order.user_id == current_user.id,
+        )
+    )
+    order = result.scalar_one_or_none()
 
     if not order:
         raise HTTPException(status_code=404, detail="訂單不存在")
@@ -188,6 +190,6 @@ async def get_order_status(
         "trade_no": order.trade_no,
         "plan": order.plan,
         "amount": order.amount,
-        "status": order.status,
+        "status": order.status.value,
         "paid_at": order.paid_at,
     }
