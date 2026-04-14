@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { useAuth } from "@/context/AuthContext";
+import { createOrder } from "@/api";
 import styles from "./Pricing.module.scss";
 
 const PLANS = [
@@ -109,6 +111,38 @@ const FAQ = [
 
 export default function Pricing() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [loadingPlan, setLoadingPlan] = useState(null);
+  const { user } = useAuth();
+
+  const handlePlanClick = async (plan) => {
+    if (plan.key === "free") return;
+    if (!plan.available) return;
+
+    if (!user) {
+      // 未登入：捲動到頁面頂部並提示
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      alert("請先登入後再選擇方案");
+      return;
+    }
+
+    try {
+      setLoadingPlan(plan.key);
+      const { html, trade_no } = await createOrder(plan.key);
+      // 儲存 trade_no，付款完成後結果頁使用
+      localStorage.setItem("tb_pending_trade", trade_no);
+      // 注入 ECPay 自動提交表單並導向付款頁
+      const container = document.createElement("div");
+      container.innerHTML = html;
+      document.body.appendChild(container);
+      const form = container.querySelector("form");
+      if (form) form.submit();
+    } catch (err) {
+      console.error(err);
+      alert("建立訂單失敗，請稍後再試");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <>
@@ -161,9 +195,10 @@ export default function Pricing() {
 
                 <button
                   className={`${styles.ctaBtn} ${styles[`cta_${plan.ctaStyle}`]}`}
-                  disabled={!plan.available}
+                  disabled={!plan.available || loadingPlan === plan.key}
+                  onClick={() => handlePlanClick(plan)}
                 >
-                  {plan.cta}
+                  {loadingPlan === plan.key ? "處理中..." : plan.cta}
                 </button>
 
                 <ul className={styles.featureList}>

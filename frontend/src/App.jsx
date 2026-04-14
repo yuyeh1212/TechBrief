@@ -12,6 +12,7 @@ import Pricing from "@/pages/Pricing";
 import FinancePage from "@/pages/FinancePage";
 import AccountPage from "@/pages/AccountPage";
 import AiPage from "@/pages/AiPage";
+import PaymentResult from "@/pages/PaymentResult";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/finance" element={<FinancePage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/payment/result" element={<PaymentResult />} />
 
           {/* Unsubscribe 頁面（簡易） */}
           <Route path="/unsubscribe" element={<UnsubscribePage />} />

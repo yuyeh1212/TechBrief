@@ -48,6 +48,14 @@ class Settings(BaseSettings):
     NEWS_FETCH_MINUTE: int = 0
     ARTICLES_PER_RUN: int = 10
 
+    # ECPay 綠界金流（測試環境預設值）
+    ECPAY_MERCHANT_ID: str = "2000132"
+    ECPAY_HASH_KEY: str = "5294y06JbISpM5x9"
+    ECPAY_HASH_IV: str = "v77hoKGq4kWxNNIS"
+    ECPAY_API_URL: str = "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5"
+    # 正式環境改為: https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5
+    FRONTEND_URL: str = "https://techbrief.zeabur.app"
+
     class Config:
         env_file = ".env"
         case_sensitive = True

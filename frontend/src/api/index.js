@@ -37,3 +37,10 @@ export const searchArticles = async ({ q, page = 1, page_size = 9 }) => {
   const res = await api.get(`/articles/search?${params}`);
   return res.data;
 };
+
+// 金流
+export const createOrder = (plan) =>
+  api.post("/payment/create-order", { plan }).then((r) => r.data);
+
+export const getOrderStatus = (trade_no) =>
+  api.get(`/payment/order/${trade_no}`).then((r) => r.data);

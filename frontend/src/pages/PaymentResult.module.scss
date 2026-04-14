@@ -1,0 +1,138 @@
+@use "@/styles/variables" as *;
+
+.page {
+  min-height: 100vh;
+  padding-top: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 80px;
+  background: var(--background);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: 16px;
+  padding: 56px 48px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Spinner */
+.spinner {
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--outline-variant);
+  border-top-color: var(--primary-container);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status icon */
+.icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.iconSuccess {
+  background: rgba(0, 229, 255, 0.12);
+  color: var(--primary-container);
+  border: 2px solid var(--primary-container);
+}
+
+.iconFailed {
+  background: rgba(255, 82, 82, 0.12);
+  color: #ff5252;
+  border: 2px solid #ff5252;
+}
+
+.iconUnknown {
+  background: rgba(255, 214, 0, 0.12);
+  color: #ffd600;
+  border: 2px solid #ffd600;
+}
+
+/* Text */
+.title {
+  font-family: var(--font-headline);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.desc {
+  font-size: 15px;
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  margin: 0;
+
+  strong {
+    color: var(--primary-container);
+  }
+}
+
+/* Action buttons */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btnPrimary {
+  display: block;
+  background: var(--gradient-primary);
+  color: var(--on-primary);
+  padding: 13px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: var(--font-headline);
+  font-size: 15px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.88; }
+}
+
+.btnOutline {
+  display: block;
+  background: transparent;
+  color: var(--on-surface-variant);
+  border: 1px solid var(--outline-variant);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover {
+    border-color: var(--primary-container);
+    color: var(--primary-container);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 40px 24px;
+  }
+}
