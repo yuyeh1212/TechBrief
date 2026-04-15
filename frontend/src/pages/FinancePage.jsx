@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useSearchParams } from "react-router-dom";
 import { getArticles } from "@/api";
+import { useAuth } from "@/context/AuthContext";
 import ArticleCard from "@/components/ui/ArticleCard";
 import SubscribeBar from "@/components/ui/SubscribeBar";
 import styles from "./FinancePage.module.scss";
@@ -15,6 +16,7 @@ const TABS = [
 const PAGE_SIZE = 9;
 
 export default function FinancePage() {
+  const { isPro } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabParam || "news");
@@ -107,7 +109,31 @@ export default function FinancePage() {
           </div>
         </div>
 
-        <div className={styles.container}>
+        {/* ── Pro 鎖定遮罩 ── */}
+        {!isPro && (
+          <div className={styles.paywallWrap}>
+            <div className={styles.paywallBlur}>
+              {/* 模糊假內容 */}
+              <div className={styles.paywallFakeGrid}>
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className={styles.paywallFakeCard} />
+                ))}
+              </div>
+            </div>
+            <div className={styles.paywallOverlay}>
+              <span className={styles.paywallIcon}>🔒</span>
+              <h2 className={styles.paywallTitle}>財經專區需要 Pro 方案</h2>
+              <p className={styles.paywallDesc}>
+                解鎖財經新聞、財報動態、新聞股票提示與股票監控功能
+              </p>
+              <Link to="/pricing" className={styles.paywallBtn}>
+                查看訂閱方案
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <div className={styles.container} style={!isPro ? { display: "none" } : {}}>
           {/* ── 財經新聞 ── */}
           {activeTab === "news" && (
             <>

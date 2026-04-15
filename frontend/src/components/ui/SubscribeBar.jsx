@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { subscribe } from "@/api";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./SubscribeBar.module.scss";
 
 export default function SubscribeBar() {
+  const { isMini } = useAuth();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [message, setMessage] = useState("");
@@ -34,7 +37,13 @@ export default function SubscribeBar() {
           </p>
         </div>
 
-        {status === "success" ? (
+        {!isMini ? (
+          /* 非 Mini：鎖定，顯示升級提示 */
+          <div className={styles.lockedWrap}>
+            <p className={styles.lockedText}>🔒 訂閱 Email 電子報需要 Mini 以上方案</p>
+            <Link to="/pricing" className={styles.lockedBtn}>查看訂閱方案</Link>
+          </div>
+        ) : status === "success" ? (
           <div className={styles.successMsg}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="#00d4ff" strokeWidth="1.5"/>

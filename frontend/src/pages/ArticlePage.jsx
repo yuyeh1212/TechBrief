@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
 import { getArticle, getLatestArticles } from "@/api";
+import { useAuth } from "@/context/AuthContext";
 import ArticleCard from "@/components/ui/ArticleCard";
 import styles from "./ArticlePage.module.scss";
 
@@ -33,6 +34,7 @@ const FALLBACK_IMAGE =
 export default function ArticlePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { isPro } = useAuth();
   const [article, setArticle] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -218,23 +220,34 @@ export default function ArticlePage() {
           {/* 相關股票提示 - Pro 限定 */}
           {article.related_stocks && (
             <div className={styles.stockSection}>
-              <div className={styles.stockLock}>
-                <div className={styles.stockBlur}>
+              {isPro ? (
+                /* Pro 用戶：顯示真實股票代號 */
+                <div className={styles.stockUnlocked}>
                   <span className={styles.stockLabel}>📈 相關股票提示</span>
                   <div className={styles.stockTags}>
-                    {["NVDA", "2330.TW", "AAPL"].map((s) => (
-                      <span key={s} className={styles.stockTag}>
-                        {s}
-                      </span>
+                    {article.related_stocks.split(",").map((s) => s.trim()).filter(Boolean).map((s) => (
+                      <span key={s} className={styles.stockTag}>{s}</span>
                     ))}
                   </div>
                 </div>
-                <div className={styles.stockOverlay}>
-                  <span>🔒</span>
-                  <p>升級 Pro 解鎖股票提示</p>
-                  <button className={styles.upgradeBtn}>升級方案</button>
+              ) : (
+                /* 非 Pro：鎖定遮罩 */
+                <div className={styles.stockLock}>
+                  <div className={styles.stockBlur}>
+                    <span className={styles.stockLabel}>📈 相關股票提示</span>
+                    <div className={styles.stockTags}>
+                      {["XXXX", "0000.TW", "XXXX"].map((s) => (
+                        <span key={s} className={styles.stockTag}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={styles.stockOverlay}>
+                    <span>🔒</span>
+                    <p>升級 Pro 解鎖股票提示</p>
+                    <Link to="/pricing" className={styles.upgradeBtn}>查看方案</Link>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </article>

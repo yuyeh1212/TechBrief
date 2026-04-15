@@ -414,8 +414,18 @@
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-body);
+  text-decoration: none;
+  display: inline-block;
 
   &:hover {
     opacity: 0.9;
   }
+}
+
+/* Pro 用戶解鎖後的股票提示 */
+.stockUnlocked {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
 }
