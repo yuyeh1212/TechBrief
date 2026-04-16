@@ -190,10 +190,31 @@ export default function ArticlePage() {
           </header>
 
           {/* Content */}
-          <div
-            className={styles.content}
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
+          {article.category === "finance" && !isPro ? (
+            <div className={styles.financeGate}>
+              <div
+                className={styles.contentPreview}
+                dangerouslySetInnerHTML={{
+                  __html: article.content.slice(0, 300) + "...",
+                }}
+              />
+              <div className={styles.financeOverlay}>
+                <span className={styles.financeIcon}>🔒</span>
+                <h3 className={styles.financeGateTitle}>完整內文需要 Pro 方案</h3>
+                <p className={styles.financeGateDesc}>
+                  升級 Pro 解鎖所有財經新聞全文、財報分析與股票提示
+                </p>
+                <Link to="/pricing" className={styles.financeGateBtn}>
+                  查看訂閱方案
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={styles.content}
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
+          )}
 
           {/* Source link */}
           {article.source_url && (

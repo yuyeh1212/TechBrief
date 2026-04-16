@@ -109,31 +109,7 @@ export default function FinancePage() {
           </div>
         </div>
 
-        {/* ── Pro 鎖定遮罩 ── */}
-        {!isPro && (
-          <div className={styles.paywallWrap}>
-            <div className={styles.paywallBlur}>
-              {/* 模糊假內容 */}
-              <div className={styles.paywallFakeGrid}>
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className={styles.paywallFakeCard} />
-                ))}
-              </div>
-            </div>
-            <div className={styles.paywallOverlay}>
-              <span className={styles.paywallIcon}>🔒</span>
-              <h2 className={styles.paywallTitle}>財經專區需要 Pro 方案</h2>
-              <p className={styles.paywallDesc}>
-                解鎖財經新聞、財報動態、新聞股票提示與股票監控功能
-              </p>
-              <Link to="/pricing" className={styles.paywallBtn}>
-                查看訂閱方案
-              </Link>
-            </div>
-          </div>
-        )}
-
-        <div className={styles.container} style={!isPro ? { display: "none" } : {}}>
+        <div className={styles.container}>
           {/* ── 財經新聞 ── */}
           {activeTab === "news" && (
             <>
