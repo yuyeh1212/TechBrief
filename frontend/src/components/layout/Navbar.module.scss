@@ -323,6 +323,37 @@
   @media (max-width: 768px) { display: none; }
 }
 
+// ── 自訂 Google 登入按鈕（桌面）──
+.googleLoginWrap {
+  position: relative;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) { display: none; }
+}
+
+// ── 自訂 Google 登入按鈕（手機）──
+.mobileGoogleLoginWrap {
+  position: relative;
+  width: 100%;
+  padding: 8px 12px 4px;
+}
+
+// 透明 Google 官方按鈕，疊在視覺按鈕上方，負責實際點擊事件
+.googleBtnOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  overflow: hidden;
+  cursor: pointer;
+
+  // 讓 GIS 渲染的 iframe/div 填滿容器
+  > div,
+  iframe {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
 .googleLoginBtn {
   display: flex;
   align-items: center;
