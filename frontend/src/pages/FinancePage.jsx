@@ -103,7 +103,7 @@ export default function FinancePage() {
                 onClick={() => handleTabChange(tab.key)}
               >
                 {tab.label}
-                {tab.key === "stocks" && <span className={styles.proBadge}>Pro</span>}
+                {tab.key === "stocks" && <span className={styles.proBadge}>Max</span>}
               </button>
             ))}
           </div>
