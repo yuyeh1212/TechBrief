@@ -16,7 +16,7 @@ const TABS = [
 const PAGE_SIZE = 9;
 
 export default function FinancePage() {
-  const { isPro } = useAuth();
+  const { isPro, isMax } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabParam || "news");
@@ -168,7 +168,7 @@ export default function FinancePage() {
             </div>
           )}
 
-          {/* ── 股票監控（Pro 遮罩）── */}
+          {/* ── 股票監控（Max 遮罩）── */}
           {activeTab === "stocks" && (
             <div className={styles.stockSection}>
               <div className={styles.stockLock}>
@@ -185,14 +185,16 @@ export default function FinancePage() {
                   </div>
                 </div>
                 {/* 遮罩 */}
-                <div className={styles.stockOverlay}>
-                  <span className={styles.lockIcon}>🔒</span>
-                  <h3>升級 Pro 解鎖股票監控</h3>
-                  <p>追蹤科技股即時動態、相關新聞連動與 AI 分析報告</p>
-                  <Link to="/pricing" className={styles.upgradeBtn}>
-                    查看方案
-                  </Link>
-                </div>
+                {!isMax && (
+                  <div className={styles.stockOverlay}>
+                    <span className={styles.lockIcon}>🔒</span>
+                    <h3>股票監控需要 Max 方案</h3>
+                    <p>追蹤科技股即時動態、相關新聞連動與 AI 分析報告</p>
+                    <Link to="/pricing" className={styles.upgradeBtn}>
+                      查看方案
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           )}

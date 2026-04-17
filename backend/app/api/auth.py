@@ -13,6 +13,17 @@ from app.models.user import User
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def _admin_emails() -> list[str]:
+    return [e.strip() for e in settings.ADMIN_EMAILS.split(",") if e.strip()]
+
+
+def _effective_plan(user: "User") -> str:
+    """白名單帳號永遠回傳 max 方案"""
+    if user.email in _admin_emails():
+        return "max"
+    return user.plan
+
+
 class GoogleLoginRequest(BaseModel):
     credential: str  # Google ID token
 
@@ -68,10 +79,14 @@ async def google_login(body: GoogleLoginRequest, db: AsyncSession = Depends(get_
         await db.refresh(user)
 
     token = create_access_token(user.id)
-    return AuthResponse(access_token=token, user=UserResponse.model_validate(user))
+    user_data = UserResponse.model_validate(user)
+    user_data.plan = _effective_plan(user)
+    return AuthResponse(access_token=token, user=user_data)
 
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
     """取得目前登入使用者資訊"""
-    return UserResponse.model_validate(current_user)
+    user_data = UserResponse.model_validate(current_user)
+    user_data.plan = _effective_plan(current_user)
+    return user_data

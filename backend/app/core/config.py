@@ -57,6 +57,9 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = "https://techbrief.zeabur.app"
     BACKEND_URL: str = "https://api-techbrief.zeabur.app"
 
+    # 白名單帳號（自動給予 max 方案，方便測試）
+    ADMIN_EMAILS: str = "herry861212@gmail.com"
+
     class Config:
         env_file = ".env"
         case_sensitive = True

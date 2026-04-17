@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useSearchParams } from "react-router-dom";
 import { getOrderStatus } from "@/api";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./PaymentResult.module.scss";
 
 const MAX_POLLS = 10;
@@ -12,6 +13,7 @@ export default function PaymentResult() {
   const [status, setStatus] = useState("loading"); // loading | paid | failed | unknown
   const [orderInfo, setOrderInfo] = useState(null);
   const pollCount = useRef(0);
+  const { refreshUser } = useAuth();
 
   // 優先從 URL 參數取 trade_no（ECPay /return 重導向帶入）
   // 備用從 localStorage 讀（ClientBackURL 沒帶參數時）
@@ -39,6 +41,7 @@ export default function PaymentResult() {
         if (order.status === "paid") {
           setStatus("paid");
           localStorage.removeItem("tb_pending_trade");
+          await refreshUser(); // 自動刷新用戶方案，不需重新登入
           return; // stop polling
         }
         if (order.status === "failed" || order.status === "cancelled") {
