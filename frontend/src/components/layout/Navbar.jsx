@@ -51,22 +51,9 @@ export default function Navbar() {
     }
   }, [user]);
 
-  // 初始化並渲染 Google 登入按鈕（只需執行一次）
+  // 初始化 Google Identity Services（只需執行一次）
   useEffect(() => {
-    const renderBtn = (id) => {
-      const el = document.getElementById(id);
-      if (el) {
-        window.google.accounts.id.renderButton(el, {
-          theme: "outline",
-          size: "medium",
-          shape: "pill",
-          text: "signin_with",
-          locale: "zh-TW",
-        });
-      }
-    };
-
-    const initGoogleBtn = () => {
+    const initGoogle = () => {
       if (!window.google?.accounts?.id) return;
       window.google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
@@ -79,18 +66,19 @@ export default function Navbar() {
           }
         },
       });
-      renderBtn("google-signin-btn");
-      renderBtn("google-signin-btn-mobile");
     };
 
-    // 若腳本已載入直接執行，否則等 load 事件
     if (window.google?.accounts?.id) {
-      initGoogleBtn();
+      initGoogle();
     } else {
-      window.addEventListener("load", initGoogleBtn);
-      return () => window.removeEventListener("load", initGoogleBtn);
+      window.addEventListener("load", initGoogle);
+      return () => window.removeEventListener("load", initGoogle);
     }
-  }, [loginWithGoogle]); // 移除 user 依賴，只初始化一次
+  }, [loginWithGoogle]);
+
+  const handleGoogleLogin = () => {
+    window.google?.accounts?.id?.prompt();
+  };
 
   useEffect(() => {
     setMobileOpen(false);
@@ -199,12 +187,18 @@ export default function Navbar() {
           </Link>
         )}
 
-        {/* Google 登入按鈕（桌面）：永遠留在 DOM，登入後用 CSS 隱藏 */}
-        <div
-          id="google-signin-btn"
-          className={styles.googleSigninBtn}
-          style={{ display: user ? "none" : "block" }}
-        />
+        {/* Google 登入按鈕（桌面） */}
+        {!user && (
+          <button className={styles.googleLoginBtn} onClick={handleGoogleLogin}>
+            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            使用 Google 登入
+          </button>
+        )}
 
         {/* 登入後的使用者下拉選單 */}
         {user && (
@@ -394,9 +388,15 @@ export default function Navbar() {
               <Link to="/pricing" className={styles.mobileNavLink} onClick={() => setMobileOpen(false)}>
                 訂閱方案
               </Link>
-              <div className={styles.mobileGoogleBtn}>
-                <div id="google-signin-btn-mobile" />
-              </div>
+              <button className={styles.mobileGoogleLoginBtn} onClick={() => { handleGoogleLogin(); setMobileOpen(false); }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                使用 Google 登入
+              </button>
             </div>
           )}
         </nav>
