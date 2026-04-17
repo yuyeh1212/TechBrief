@@ -12,7 +12,7 @@ const AI_SUBMENU = [
 const FINANCE_SUBMENU = [
   { label: "財經新聞", to: "/finance", desc: "市場動態" },
   { label: "財報", to: "/finance?tab=reports", desc: "即將推出" },
-  { label: "股票監控", to: "/finance?tab=stocks", desc: "Pro 限定" },
+  { label: "股票監控", to: "/finance?tab=stocks", desc: "Max 限定" },
 ];
 
 const NAV_ITEMS = [
