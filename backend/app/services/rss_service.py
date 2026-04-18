@@ -31,9 +31,9 @@ RSS_SOURCES = [
     # 財經
     {"name": "經濟日報", "url": "https://money.udn.com/rssfeed/news/1001/5591", "category": "finance"},
     {"name": "工商時報", "url": "https://ctee.com.tw/feed", "category": "finance"},
-    {"name": "MoneyDJ", "url": "https://www.moneydj.com/KMDJ/RssReader/RssReader.aspx?id=1", "category": "finance"},
-    {"name": "Reuters Business", "url": "https://feeds.reuters.com/reuters/businessNews", "category": "finance"},
+    {"name": "MoneyDJ", "url": "https://www.moneydj.com/KMDJ/RssReader/RssReader.aspx?id=1", "category": "finance", "verify_ssl": False},
     {"name": "Yahoo Finance", "url": "https://finance.yahoo.com/news/rssindex", "category": "finance"},
+    {"name": "Investing.com 財經", "url": "https://tw.investing.com/rss/news.rss", "category": "finance"},
 ]
 
 CATEGORY_KEYWORDS = {
@@ -67,7 +67,13 @@ async def fetch_rss_articles(hours: int = 24) -> List[Dict]:
     async with httpx.AsyncClient(timeout=15.0, follow_redirects=True, headers=HEADERS) as client:
         for source in RSS_SOURCES:
             try:
-                resp = await client.get(source["url"])
+                verify = source.get("verify_ssl", True)
+                if not verify:
+                    # SSL 驗證失敗的來源使用獨立 client
+                    async with httpx.AsyncClient(timeout=15.0, follow_redirects=True, headers=HEADERS, verify=False) as ssl_client:
+                        resp = await ssl_client.get(source["url"])
+                else:
+                    resp = await client.get(source["url"])
                 feed = feedparser.parse(resp.text)
 
                 for entry in feed.entries:
