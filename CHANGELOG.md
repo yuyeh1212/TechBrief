@@ -76,7 +76,7 @@
 
 ### 待執行
 - [ ] 財經新聞更新頻率調整
-- [ ] Google Analytics 串接
+- [x] Google Analytics 串接（GA4，測量 ID：G-70F23R64M0，自動追蹤頁面切換）
 - [ ] 推薦網站 / 友站連結區塊
 - [ ] 訂閱到期日 + 到期前三天 Email 提醒
 - [ ] Pro / Max 功能重整定價
