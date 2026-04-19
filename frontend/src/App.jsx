@@ -14,6 +14,7 @@ import FinancePage from "@/pages/FinancePage";
 import AccountPage from "@/pages/AccountPage";
 import AiPage from "@/pages/AiPage";
 import PaymentResult from "@/pages/PaymentResult";
+import FriendDrawer from "@/components/ui/FriendDrawer";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Footer />
+        <FriendDrawer />
       </BrowserRouter>
     </HelmetProvider>
   );
