@@ -60,12 +60,25 @@ def detect_category(title: str, summary: str) -> str:
     return "tech"
 
 
+async def fetch_rss_articles_by_type(article_type: str, hours: int = 24) -> List[Dict]:
+    """依類型抓取 RSS：article_type = 'tech' 或 'finance'"""
+    if article_type == "finance":
+        sources = [s for s in RSS_SOURCES if s["category"] == "finance"]
+    else:
+        sources = [s for s in RSS_SOURCES if s["category"] != "finance"]
+    return await _fetch_from_sources(sources, hours)
+
+
 async def fetch_rss_articles(hours: int = 24) -> List[Dict]:
+    return await _fetch_from_sources(RSS_SOURCES, hours)
+
+
+async def _fetch_from_sources(sources: List[Dict], hours: int = 24) -> List[Dict]:
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     articles = []
 
     async with httpx.AsyncClient(timeout=15.0, follow_redirects=True, headers=HEADERS) as client:
-        for source in RSS_SOURCES:
+        for source in sources:
             try:
                 verify = source.get("verify_ssl", True)
                 if not verify:

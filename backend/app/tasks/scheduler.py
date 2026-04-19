@@ -1,5 +1,6 @@
 import re
 import random
+import asyncio
 import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -10,7 +11,7 @@ from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.models.article import Article
 from app.models.subscriber import Subscriber
-from app.services.rss_service import fetch_rss_articles
+from app.services.rss_service import fetch_rss_articles, fetch_rss_articles_by_type
 from app.services.ai_service import generate_article, generate_card_summary, generate_article_from_youtube
 from app.services.email_service import send_newsletter
 from app.services.youtube_service import YOUTUBE_SOURCES, fetch_youtube_videos, fetch_transcript
@@ -42,50 +43,55 @@ def slugify(title: str) -> str:
     return f"{slug[:80]}-{timestamp}"
 
 
-async def daily_news_job():
-    """每天早上 10 點執行：抓新聞 → AI 生成 → 存 DB → 發送電子報"""
-    print(f"[Scheduler] 開始每日任務 {datetime.now(timezone.utc).isoformat()}")
+async def _generate_articles_batch(raw_list: list, quota: int, label: str) -> list:
+    """從 raw_list 中生成最多 quota 篇文章，回傳已存入 DB 的文章摘要列表"""
+    random.shuffle(raw_list)
+    candidates = raw_list[:quota * 3]  # 多抓幾篇備用（有些會被 AI 跳過）
+    saved = []
 
-    raw_articles = await fetch_rss_articles(hours=24)
-    if not raw_articles:
-        print("[Scheduler] 沒有新文章")
-        return
-
-    random.shuffle(raw_articles)
-    target = raw_articles[:settings.ARTICLES_PER_RUN * 2]
-
-    saved_articles = []
     async with AsyncSessionLocal() as db:
         count = 0
-        for raw in target:
-            if count >= settings.ARTICLES_PER_RUN:
+        for raw in candidates:
+            if count >= quota:
                 break
 
             generated = await generate_article(raw)
             if not generated:
                 continue
-            print(f"[Scheduler] generated keys: {list(generated.keys())}")
 
             card_summary = await generate_card_summary(generated["title"], generated["content"])
             related_stocks = ",".join(generated.get("related_stocks", []))
-
             slug = slugify(generated.get("title", raw["title"]))
+
+            # finance 來源鎖定分類，其他由 AI 決定
+            if raw["category"] == "finance":
+                category = "finance"
+            elif raw["category"] in ("gpt", "gemini", "claude"):
+                category = raw["category"]
+            else:
+                category = generated.get("category", "tech")
+
             article = Article(
                 title=generated["title"],
                 slug=slug,
                 summary=generated["summary"],
                 card_summary=card_summary,
                 content=generated["content"],
-                category=raw["category"] if raw["category"] != "tech" else generated.get("category", "tech"),
+                category=category,
                 image_url=raw.get("image_url"),
                 source_url=raw["url"],
                 source_name=raw["source_name"],
                 related_stocks=related_stocks,
             )
             db.add(article)
-            await db.flush()
+            try:
+                await db.flush()
+            except Exception as e:
+                print(f"[Scheduler] flush 失敗，跳過此篇: {e}")
+                await db.rollback()
+                continue
 
-            saved_articles.append({
+            saved.append({
                 "title": article.title,
                 "summary": article.summary,
                 "slug": article.slug,
@@ -93,16 +99,40 @@ async def daily_news_job():
                 "category": article.category,
             })
             count += 1
-            print(f"[Scheduler] 已生成: {article.title}")
+            print(f"[Scheduler][{label}] 已生成: {article.title}")
 
         try:
             await db.commit()
-            print(f"[Scheduler] DB commit 成功")
+            print(f"[Scheduler][{label}] DB commit 成功，共 {count} 篇")
         except Exception as e:
-            print(f"[Scheduler] DB commit 失敗: {e}")
+            print(f"[Scheduler][{label}] DB commit 失敗: {e}")
             await db.rollback()
 
-    print(f"[Scheduler] 共生成 {len(saved_articles)} 篇文章")
+    return saved
+
+
+async def daily_news_job():
+    """每天早上 10 點執行：科技 10 篇 + 財經 5 篇 → 存 DB → 發送電子報"""
+    print(f"[Scheduler] 開始每日任務 {datetime.now(timezone.utc).isoformat()}")
+
+    # 分別抓取科技和財經 RSS
+    tech_raw, finance_raw = await asyncio.gather(
+        fetch_rss_articles_by_type("tech", hours=24),
+        fetch_rss_articles_by_type("finance", hours=24),
+    )
+
+    if not tech_raw and not finance_raw:
+        print("[Scheduler] 沒有新文章")
+        return
+
+    print(f"[Scheduler] 科技來源: {len(tech_raw)} 篇，財經來源: {len(finance_raw)} 篇")
+
+    # 依序生成（避免 API 同時大量請求）
+    tech_saved = await _generate_articles_batch(tech_raw, settings.TECH_ARTICLES_PER_RUN, "科技")
+    finance_saved = await _generate_articles_batch(finance_raw, settings.FINANCE_ARTICLES_PER_RUN, "財經")
+
+    saved_articles = tech_saved + finance_saved
+    print(f"[Scheduler] 共生成 {len(saved_articles)} 篇文章（科技 {len(tech_saved)} + 財經 {len(finance_saved)}）")
 
     if saved_articles:
         async with AsyncSessionLocal() as db:

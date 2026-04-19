@@ -46,7 +46,9 @@ class Settings(BaseSettings):
     # Scheduler
     NEWS_FETCH_HOUR: int = 10
     NEWS_FETCH_MINUTE: int = 0
-    ARTICLES_PER_RUN: int = 10
+    ARTICLES_PER_RUN: int = 10       # 保留相容性
+    TECH_ARTICLES_PER_RUN: int = 10  # 科技文章配額
+    FINANCE_ARTICLES_PER_RUN: int = 5  # 財經文章配額
 
     # ECPay 綠界金流（測試環境預設值）
     ECPAY_MERCHANT_ID: str = "2000132"
