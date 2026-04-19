@@ -1,13 +1,15 @@
-// 右側抽屜容器（固定在畫面右側）
+// 右側抽屜容器
+// 收起時：translateX(content寬度) → 只有標籤突出在右側
+// 展開時：translateX(0) → 完整顯示
 .drawer {
   position: fixed;
   top: 50%;
   right: 0;
-  transform: translateY(-50%) translateX(100%);
+  transform: translateY(-50%) translateX(320px); // 收起 = 內容寬度
   z-index: 90;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.open {
@@ -16,8 +18,8 @@
 
   @media (max-width: 480px) {
     top: auto;
-    bottom: 80px;
-    transform: translateY(0) translateX(100%);
+    bottom: 100px;
+    transform: translateY(0) translateX(280px);
 
     &.open {
       transform: translateY(0) translateX(0);
@@ -25,39 +27,42 @@
   }
 }
 
-// 突出的標籤按鈕（在抽屜左側，永遠可見）
+// 標籤按鈕（永遠可見，貼著右側邊緣突出）
 .tab {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 16px 8px;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 10px;
   background: var(--surface-low);
-  border: 1px solid rgba(60, 73, 78, 0.4);
+  border: 1px solid rgba(60, 73, 78, 0.45);
   border-right: none;
   border-radius: 10px 0 0 10px;
   color: var(--on-surface-variant);
   font-size: 11px;
   font-family: var(--font-headline);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   cursor: pointer;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   white-space: nowrap;
-  transition: color 0.2s, background 0.2s;
   flex-shrink: 0;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+  min-height: 110px;
 
   &:hover {
     color: var(--primary-container);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(0, 230, 180, 0.35);
   }
 }
 
 .tabChevron {
   transition: transform 0.35s ease;
   color: var(--primary-container);
-  writing-mode: horizontal-tb; // svg 不受 writing-mode 影響，保持正常
+  writing-mode: horizontal-tb;
+  flex-shrink: 0;
 
   &.rotated {
     transform: rotate(180deg);

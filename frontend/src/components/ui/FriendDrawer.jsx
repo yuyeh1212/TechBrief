@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import styles from "./FriendDrawer.module.scss";
 
 const FRIEND_LINKS = [
@@ -48,20 +48,6 @@ const FRIEND_LINKS = [
 
 export default function FriendDrawer() {
   const [open, setOpen] = useState(false);
-  const sentinelRef = useRef(null);
-
-  // 偵測 footer 是否進入視窗，自動開關抽屜
-  useEffect(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setOpen(entry.isIntersecting),
-      { threshold: 0.05 }
-    );
-    observer.observe(footer);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <div className={`${styles.drawer} ${open ? styles.open : ""}`}>
