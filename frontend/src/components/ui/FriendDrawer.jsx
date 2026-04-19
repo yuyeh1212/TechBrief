@@ -65,21 +65,21 @@ export default function FriendDrawer() {
 
   return (
     <div className={`${styles.drawer} ${open ? styles.open : ""}`}>
-      {/* 突出的標籤按鈕 */}
+      {/* 突出的標籤按鈕（左側垂直） */}
       <button
         className={styles.tab}
         onClick={() => setOpen((o) => !o)}
-        aria-label="推薦網站"
+        aria-label="友站推薦"
       >
         <svg
-          width="14"
-          height="14"
+          width="13"
+          height="13"
           viewBox="0 0 24 24"
           fill="none"
           className={`${styles.tabChevron} ${open ? styles.rotated : ""}`}
         >
           <path
-            d="M18 15l-6-6-6 6"
+            d="M15 18l-6-6 6-6"
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
@@ -91,6 +91,7 @@ export default function FriendDrawer() {
 
       {/* 抽屜內容 */}
       <div className={styles.content}>
+        <p className={styles.contentTitle}>友站推薦</p>
         <div className={styles.grid}>
           {FRIEND_LINKS.map((site) => (
             <a
