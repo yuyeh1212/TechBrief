@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from "react-router-dom";
+import { pageview } from "@/utils/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -16,10 +17,19 @@ import PaymentResult from "@/pages/PaymentResult";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    pageview(location.pathname + location.search);
+  }, [location]);
+  return null;
+}
+
 export default function App() {
   return (
     <HelmetProvider>
       <BrowserRouter>
+        <RouteTracker />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
