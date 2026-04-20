@@ -5,7 +5,7 @@ import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import select, text
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal
