@@ -19,12 +19,12 @@ const PLANS = [
     features: [
       { text: "免費網站瀏覽", included: true },
       { text: "全站文章搜尋", included: true },
-      { text: "文章 AI 快速摘要（Flash）", included: true },
+      { text: "文章 AI 快速摘要", included: true },
       { text: "Email 訂閱通知", included: false },
-      { text: "財經專區頁面", included: false },
+      { text: "財經專區 & 財報頁面", included: false },
       { text: "新聞股票提示", included: false },
+      { text: "AI 個股簡評", included: false },
       { text: "股票掃描模擬器", included: false },
-      { text: "每週看好股票資訊", included: false },
     ],
   },
   {
@@ -41,11 +41,11 @@ const PLANS = [
     features: [
       { text: "所有 Free 功能", included: true },
       { text: "開通 Email 訂閱", included: true },
-      { text: "每日更新通知", included: true },
-      { text: "財經專區頁面", included: false },
+      { text: "每日新聞更新通知", included: true },
+      { text: "財經專區 & 財報頁面", included: false },
       { text: "新聞股票提示", included: false },
+      { text: "AI 個股簡評", included: false },
       { text: "股票掃描模擬器", included: false },
-      { text: "每週看好股票資訊", included: false },
     ],
   },
   {
@@ -56,15 +56,16 @@ const PLANS = [
     period: "/ 月",
     badge: "最受歡迎",
     available: true,
-    description: "解鎖財經專區與新聞股票提示",
+    description: "解鎖財經專區、股票提示與 AI 個股簡評",
     cta: "選擇 Pro",
     ctaStyle: "primary",
     features: [
       { text: "所有 Mini 功能", included: true },
-      { text: "開通財經專區頁面", included: true },
+      { text: "財經專區 & 財報頁面", included: true },
       { text: "新聞內含股票提示", included: true },
+      { text: "AI 個股簡評（輸入代號即時分析）", included: true },
+      { text: "每週精選看好標的報告", included: true },
       { text: "股票掃描模擬器", included: false },
-      { text: "每週看好股票資訊", included: false },
     ],
   },
   {
@@ -75,13 +76,14 @@ const PLANS = [
     period: "",
     badge: "Coming Soon",
     available: false,
-    description: "股票掃描模擬器 + 每週精選看好標的",
-    cta: "更新中",
+    description: "專業級股票掃描模擬器，精準捕捉市場機會",
+    cta: "敬請期待",
     ctaStyle: "ghost",
     features: [
       { text: "所有 Pro 功能", included: true },
-      { text: "開通股票掃描模擬器", included: true },
-      { text: "每週提供近期看好股票資訊", included: true },
+      { text: "股票掃描模擬器", included: true },
+      { text: "自訂掃描條件與篩選器", included: true },
+      { text: "美股支援（即將推出）", included: true },
     ],
   },
 ];
@@ -105,7 +107,7 @@ const FAQ = [
   },
   {
     q: "Max 方案何時推出？",
-    a: "Max 方案目前正在規劃中，股票掃描模擬器與每週精選看好股票功能完成後即會開放，歡迎加入候補清單。",
+    a: "Max 方案目前正在開發中，核心功能為專業級股票掃描模擬器，支援自訂篩選條件，未來也將加入美股支援。完成後即會公告開放，敬請期待。",
   },
 ];
 
