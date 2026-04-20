@@ -11,9 +11,10 @@ from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.models.article import Article
 from app.models.subscriber import Subscriber
+from app.models.user import User, UserPlan
 from app.services.rss_service import fetch_rss_articles, fetch_rss_articles_by_type
 from app.services.ai_service import generate_article, generate_card_summary, generate_article_from_youtube
-from app.services.email_service import send_newsletter
+from app.services.email_service import send_newsletter, send_expiry_reminder
 from app.services.youtube_service import YOUTUBE_SOURCES, fetch_youtube_videos, fetch_transcript
 
 
@@ -228,6 +229,59 @@ async def youtube_news_job():
                 await db.rollback()
 
 
+async def subscription_expiry_job():
+    """每天早上 9:00 執行：到期前 3 天發提醒信 + 到期後降回 Free"""
+    print(f"[Expiry] 開始訂閱到期檢查 {datetime.now(timezone.utc).isoformat()}")
+    now = datetime.now(timezone.utc)
+    reminder_start = now + timedelta(days=3)
+    reminder_end = now + timedelta(days=4)
+
+    async with AsyncSessionLocal() as db:
+        # 到期前 3 天：發提醒信
+        result = await db.execute(
+            select(User).where(
+                User.plan_expires_at >= reminder_start,
+                User.plan_expires_at < reminder_end,
+                User.plan != UserPlan.FREE,
+            )
+        )
+        remind_users = result.scalars().all()
+        for user in remind_users:
+            days_left = (user.plan_expires_at - now).days + 1
+            expires_str = user.plan_expires_at.strftime("%Y/%m/%d")
+            try:
+                await send_expiry_reminder(
+                    email=user.email,
+                    name=user.name,
+                    plan=user.plan.value,
+                    days_left=days_left,
+                    expires_at=expires_str,
+                )
+                print(f"[Expiry] 提醒信已發送：{user.email}（剩 {days_left} 天）")
+            except Exception as e:
+                print(f"[Expiry] 提醒信發送失敗 {user.email}: {e}")
+
+        # 已到期：降回 Free
+        result = await db.execute(
+            select(User).where(
+                User.plan_expires_at < now,
+                User.plan != UserPlan.FREE,
+            )
+        )
+        expired_users = result.scalars().all()
+        for user in expired_users:
+            print(f"[Expiry] 訂閱到期，降回 Free：{user.email}")
+            user.plan = UserPlan.FREE
+            user.plan_expires_at = None
+
+        try:
+            await db.commit()
+            print(f"[Expiry] 完成：提醒 {len(remind_users)} 人，到期降級 {len(expired_users)} 人")
+        except Exception as e:
+            print(f"[Expiry] commit 失敗: {e}")
+            await db.rollback()
+
+
 def start_scheduler():
     scheduler.add_job(
         daily_news_job,
@@ -247,6 +301,12 @@ def start_scheduler():
             timezone="Asia/Taipei",
         ),
         id="youtube_news",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        subscription_expiry_job,
+        trigger=CronTrigger(hour=9, minute=0, timezone="Asia/Taipei"),
+        id="subscription_expiry",
         replace_existing=True,
     )
     scheduler.start()

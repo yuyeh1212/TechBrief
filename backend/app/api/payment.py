@@ -1,6 +1,6 @@
 import hashlib
 import urllib.parse
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -147,6 +147,7 @@ async def ecpay_notify(request: Request, db: AsyncSession = Depends(get_db)):
         user = user_result.scalar_one_or_none()
         if user:
             user.plan = PLAN_ENUM.get(order.plan, UserPlan.FREE)
+            user.plan_expires_at = datetime.now(timezone.utc) + timedelta(days=30)
     else:
         order.status = OrderStatus.FAILED
 

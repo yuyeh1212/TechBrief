@@ -89,6 +89,57 @@ async def send_newsletter(subscribers: List[str], articles: List[Dict]) -> Dict:
     return {"success": success_count, "failed": fail_count}
 
 
+async def send_expiry_reminder(email: str, name: str, plan: str, days_left: int, expires_at: str) -> None:
+    """發送訂閱到期提醒信"""
+    import asyncio
+    resend.api_key = settings.RESEND_API_KEY
+    plan_label = {"mini": "Mini", "pro": "Pro", "max": "Max"}.get(plan, plan.upper())
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, lambda: resend.Emails.send({
+        "from": settings.RESEND_FROM_EMAIL,
+        "to": [email],
+        "subject": f"⏰ 您的 TechBrief {plan_label} 方案將於 {days_left} 天後到期",
+        "html": f"""
+        <!DOCTYPE html>
+        <html lang="zh-Hant">
+        <head><meta charset="UTF-8"></head>
+        <body style="margin:0;padding:0;background:#121223;font-family:'Inter',sans-serif;">
+            <div style="max-width:560px;margin:0 auto;padding:40px 20px;">
+                <div style="text-align:center;margin-bottom:32px;">
+                    <div style="font-size:24px;font-weight:700;background:linear-gradient(135deg,#a8e8ff,#00d4ff);
+                                -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                        TechBrief
+                    </div>
+                </div>
+                <div style="background:#1a1a2b;border-radius:12px;padding:32px;border:1px solid #2a2a3b;">
+                    <h2 style="color:#e3e0f9;margin:0 0 16px;">嗨，{name}！</h2>
+                    <p style="color:#bbc9cf;line-height:1.7;margin:0 0 20px;">
+                        您的 <strong style="color:#00d4ff;">TechBrief {plan_label}</strong> 方案將於
+                        <strong style="color:#ffd700;">{days_left} 天後（{expires_at}）</strong>到期。
+                    </p>
+                    <p style="color:#bbc9cf;line-height:1.7;margin:0 0 28px;">
+                        續訂後可繼續享有所有 {plan_label} 專屬功能，不中斷您的閱讀體驗。
+                    </p>
+                    <div style="text-align:center;">
+                        <a href="{settings.FRONTEND_URL}/pricing"
+                           style="display:inline-block;padding:12px 32px;
+                                  background:linear-gradient(135deg,#a8e8ff,#00d4ff);
+                                  color:#003642;font-weight:700;border-radius:8px;
+                                  text-decoration:none;font-size:15px;">
+                            立即續訂
+                        </a>
+                    </div>
+                </div>
+                <p style="text-align:center;color:#859398;font-size:12px;margin-top:24px;">
+                    TechBrief Labs · 如有疑問請聯絡 contact@techbrief.app
+                </p>
+            </div>
+        </body>
+        </html>
+        """,
+    }))
+
+
 async def send_subscription_confirm(email: str) -> None:
     """發送訂閱確認信"""
     import asyncio

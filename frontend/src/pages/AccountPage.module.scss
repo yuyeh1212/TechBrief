@@ -143,6 +143,42 @@
   }
 }
 
+.expiryInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(60, 73, 78, 0.3);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.expiryLabel {
+  font-size: 12px;
+  color: var(--outline);
+  font-family: var(--font-headline);
+}
+
+.expiryDate {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.expiryWarning {
+  font-size: 12px;
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.expiryExpired {
+  font-size: 12px;
+  color: #f87171;
+  font-weight: 600;
+}
+
 .upgradeBtn {
   display: inline-block;
   background: var(--gradient-primary);

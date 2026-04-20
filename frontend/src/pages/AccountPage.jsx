@@ -49,6 +49,16 @@ export default function AccountPage() {
   const planInfo = PLAN_LABELS[plan] || PLAN_LABELS.free;
   const features = PLAN_FEATURES[plan] || PLAN_FEATURES.free;
 
+  const expiresAt = user.plan_expires_at
+    ? new Date(user.plan_expires_at).toLocaleDateString("zh-TW", {
+        year: "numeric", month: "long", day: "numeric",
+      })
+    : null;
+
+  const daysLeft = user.plan_expires_at
+    ? Math.ceil((new Date(user.plan_expires_at) - new Date()) / (1000 * 60 * 60 * 24))
+    : null;
+
   return (
     <>
       <Helmet>
@@ -107,6 +117,19 @@ export default function AccountPage() {
                   <span className={styles.planPrice}>即將推出</span>
                 )}
               </div>
+              {expiresAt && (
+                <div className={styles.expiryInfo}>
+                  <span className={styles.expiryLabel}>訂閱到期日</span>
+                  <span className={styles.expiryDate}>{expiresAt}</span>
+                  {daysLeft <= 3 && daysLeft > 0 && (
+                    <span className={styles.expiryWarning}>⚠️ 還有 {daysLeft} 天到期</span>
+                  )}
+                  {daysLeft <= 0 && (
+                    <span className={styles.expiryExpired}>已到期</span>
+                  )}
+                </div>
+              )}
+
               <ul className={styles.featureList}>
                 {features.map((f) => (
                   <li key={f}>

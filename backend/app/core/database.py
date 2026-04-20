@@ -33,6 +33,7 @@ async def init_db():
         # 新欄位用 ALTER 方式加，不影響現有資料
         await conn.execute(text("ALTER TABLE articles ADD COLUMN IF NOT EXISTS card_summary TEXT"))
         await conn.execute(text("ALTER TABLE articles ADD COLUMN IF NOT EXISTS related_stocks VARCHAR(500)"))
+        await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_expires_at TIMESTAMP WITH TIME ZONE"))
         # youtube_processed 建在正確的 DB
         await conn.execute(text("""
             CREATE TABLE IF NOT EXISTS youtube_processed (
