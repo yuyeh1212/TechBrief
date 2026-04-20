@@ -207,6 +207,18 @@
   color: var(--on-surface);
 }
 
+.comingSoonTickerHint {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  margin-bottom: 4px;
+
+  strong {
+    color: var(--primary);
+    font-family: var(--font-headline);
+    font-size: 15px;
+  }
+}
+
 .comingSoonDesc {
   font-size: 15px;
   color: var(--on-surface-variant);

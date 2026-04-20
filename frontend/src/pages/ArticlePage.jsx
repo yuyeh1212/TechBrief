@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { format } from "date-fns";
 import { zhTW } from "date-fns/locale";
@@ -247,7 +247,12 @@ export default function ArticlePage() {
                   <span className={styles.stockLabel}>📈 相關股票提示</span>
                   <div className={styles.stockTags}>
                     {article.related_stocks.split(",").map((s) => s.trim()).filter(Boolean).map((s) => (
-                      <span key={s} className={styles.stockTag}>{s}</span>
+                      <Link
+                        key={s}
+                        to={`/finance?tab=analysis&ticker=${encodeURIComponent(s)}`}
+                        className={styles.stockTag}
+                        title="前往個股簡評"
+                      >{s}</Link>
                     ))}
                   </div>
                 </div>

@@ -170,22 +170,30 @@ export default function FinancePage() {
           )}
 
           {/* ── 個股簡評（Pro 遮罩）── */}
-          {activeTab === "analysis" && (
-            <div className={styles.comingSoon}>
-              <div className={styles.comingSoonIcon}>🔍</div>
-              <h2 className={styles.comingSoonTitle}>AI 個股簡評</h2>
-              <p className={styles.comingSoonDesc}>
-                輸入股票代號，AI 即時彙整近期相關新聞與市場情緒分析。
-              </p>
-              {!isPro ? (
-                <Link to="/pricing" className={styles.upgradeBtn}>
-                  升級 Pro 解鎖
-                </Link>
-              ) : (
-                <span className={styles.comingSoonBadge}>Coming Soon</span>
-              )}
-            </div>
-          )}
+          {activeTab === "analysis" && (() => {
+            const ticker = searchParams.get("ticker") || "";
+            return (
+              <div className={styles.comingSoon}>
+                <div className={styles.comingSoonIcon}>🔍</div>
+                <h2 className={styles.comingSoonTitle}>AI 個股簡評</h2>
+                {ticker && isPro && (
+                  <p className={styles.comingSoonTickerHint}>
+                    即將分析：<strong>{ticker}</strong>
+                  </p>
+                )}
+                <p className={styles.comingSoonDesc}>
+                  輸入股票代號，AI 即時彙整近期相關新聞與市場情緒分析。
+                </p>
+                {!isPro ? (
+                  <Link to="/pricing" className={styles.upgradeBtn}>
+                    升級 Pro 解鎖
+                  </Link>
+                ) : (
+                  <span className={styles.comingSoonBadge}>Coming Soon</span>
+                )}
+              </div>
+            );
+          })()}
 
           {/* ── 股票監控（Max 遮罩）── */}
           {activeTab === "stocks" && (

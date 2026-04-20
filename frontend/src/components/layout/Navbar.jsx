@@ -96,6 +96,24 @@ export default function Navbar() {
     setAiOpen(false);
   }, [location.pathname]);
 
+  // 登出後重新渲染桌面版 Google 按鈕（!user 讓元素重新 mount，需補 renderButton）
+  useEffect(() => {
+    if (user) return;
+    const timer = setTimeout(() => {
+      if (!window.google?.accounts?.id) return;
+      const el = document.getElementById("google-signin-btn");
+      if (!el) return;
+      window.google.accounts.id.renderButton(el, {
+        theme: "outline",
+        size: "large",
+        shape: "rectangular",
+        text: "signin_with",
+        locale: "zh-TW",
+      });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [user]);
+
   // 手機選單開啟時，補渲染 Google 按鈕（選單是條件渲染，mount 時元素不存在）
   useEffect(() => {
     if (!mobileOpen || user) return;
