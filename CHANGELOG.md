@@ -63,22 +63,41 @@
 
 ---
 
-## v2.1（進行中）
+## v2.1 — 2026-04-21
 
-### 已完成
-- [x] 付款後自動刷新用戶資料（不需重新登入）
-- [x] Google 登入按鈕改為自訂樣式（符合深色霓虹風格，overlay 疊層方案）
-- [x] 手機版 Google 登入按鈕修正（選單條件渲染導致 renderButton 失效）
-- [x] 股票監控遮罩改為 Max 才解鎖（桌面 + 手機選單）
-- [x] 測試帳號白名單機制（ADMIN_EMAILS 環境變數，逗號分隔，固定 Max 方案）
-- [x] 排程器 bug 修正：AI 非科技內容自動跳過、category 欄位驗證、API 重試機制（90s / 最多 2 次）
-- [x] RSS 來源修正：MoneyDJ SSL 繞過、Reuters 移除改用 Investing.com
+### 功能新增
 
-### 待執行
-- [x] 財經新聞配額調整：科技 10 篇 + 財經 5 篇分開生成，各自固定配額不混用（每日共 15 篇）
-- [x] Google Analytics 串接（GA4，測量 ID：G-70F23R64M0，自動追蹤頁面切換）
-- [ ] 推薦網站 / 友站連結區塊
-- [ ] 訂閱到期日 + 到期前三天 Email 提醒
-- [ ] Pro / Max 功能重整定價
+- 付款後自動刷新用戶資料（PaymentResult 輪詢完成後呼叫 refreshUser，不需重新登入）
+- Google 登入按鈕改為自訂深色霓虹樣式（overlay 疊層方案，解決 FedCM 停用問題）
+- 手機版 Google 登入按鈕修正（選單條件渲染導致 renderButton 失效，改以 useEffect 補渲染）
+- 測試帳號白名單機制（ADMIN_EMAILS 環境變數，逗號分隔，固定回傳 Max 方案）
+- Google Analytics 4 串接（測量 ID：G-70F23R64M0，RouteTracker 自動追蹤頁面切換）
+- 友站推薦右側抽屜（固定在畫面右側，點標籤滑出，收錄 6 個友站）
+- 財經新聞配額調整：科技 10 篇 + 財經 5 篇分開生成，各自固定配額，每日共 15 篇
+- 訂閱到期日系統：付款成功寫入 plan_expires_at（30 天後）、AccountPage 顯示到期日與警告
+- 到期前 3 天自動發送提醒 Email（每日 09:00 排程），到期後自動降回 Free 方案
+
+### 方案調整
+
+- Pro 方案新增：AI 個股簡評（Coming Soon）、每週精選看好標的
+- Max 方案精簡：僅保留股票掃描模擬器（自訂篩選條件，未來支援台股）
+- 財經頁 Tab 調整：財經新聞 → 財報 → 個股簡評 → 股票監控（Max）
+- Navbar 財經下拉選單新增個股簡評項目
+
+### Bug 修正
+
+- 排程器 flush 失敗改為單篇跳過，不影響其他文章（修正原本一篇壞掉全部 rollback）
+- AI 非科技內容（動物、體育等）自動跳過，不再插入 DB（新增 skip 機制與 category 合法性驗證）
+- OpenRouter API 逾時改為 90 秒，加最多 2 次重試
+- RSS 來源：MoneyDJ SSL 憑證問題以 verify=False 繞過，Reuters 已失效移除改用 Investing.com
+- scheduler.py 補上 timedelta import
+- 到期提醒改用日期比較（忽略時間精度），避免秒差造成漏發
+
+---
+
+## 待執行（v2.2 預定）
+
+- [ ] AI 個股簡評功能實作（前端輸入介面 + 後端 API）
 - [ ] 股票掃描模擬器（Max）
 - [ ] 管理員後台
+- [ ] Resend 網域驗證（讓提醒信可寄給任意用戶）
