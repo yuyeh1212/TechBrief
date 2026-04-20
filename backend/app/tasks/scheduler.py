@@ -233,21 +233,21 @@ async def subscription_expiry_job():
     """每天早上 9:00 執行：到期前 3 天發提醒信 + 到期後降回 Free"""
     print(f"[Expiry] 開始訂閱到期檢查 {datetime.now(timezone.utc).isoformat()}")
     now = datetime.now(timezone.utc)
-    reminder_start = now + timedelta(days=3)
-    reminder_end = now + timedelta(days=4)
+    # 用日期比較（忽略時間），避免秒數差異造成漏發
+    from sqlalchemy import func, cast, Date
+    target_date = (now + timedelta(days=3)).date()
 
     async with AsyncSessionLocal() as db:
-        # 到期前 3 天：發提醒信
+        # 到期前 3 天：發提醒信（比較日期部分）
         result = await db.execute(
             select(User).where(
-                User.plan_expires_at >= reminder_start,
-                User.plan_expires_at < reminder_end,
+                cast(User.plan_expires_at, Date) == target_date,
                 User.plan != UserPlan.FREE,
             )
         )
         remind_users = result.scalars().all()
         for user in remind_users:
-            days_left = (user.plan_expires_at - now).days + 1
+            days_left = 3
             expires_str = user.plan_expires_at.strftime("%Y/%m/%d")
             try:
                 await send_expiry_reminder(
