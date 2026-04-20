@@ -83,7 +83,6 @@ const PLANS = [
       { text: "所有 Pro 功能", included: true },
       { text: "股票掃描模擬器", included: true },
       { text: "自訂掃描條件與篩選器", included: true },
-      { text: "美股支援（即將推出）", included: true },
     ],
   },
 ];

@@ -10,6 +10,7 @@ import styles from "./FinancePage.module.scss";
 const TABS = [
   { key: "news", label: "財經新聞" },
   { key: "reports", label: "財報" },
+  { key: "analysis", label: "個股簡評" },
   { key: "stocks", label: "股票監控" },
 ];
 
@@ -22,7 +23,7 @@ export default function FinancePage() {
   const [activeTab, setActiveTab] = useState(tabParam || "news");
 
   useEffect(() => {
-    if (tabParam && ["news", "reports", "stocks"].includes(tabParam)) {
+    if (tabParam && ["news", "reports", "analysis", "stocks"].includes(tabParam)) {
       setActiveTab(tabParam);
     } else if (!tabParam) {
       setActiveTab("news");
@@ -165,6 +166,24 @@ export default function FinancePage() {
                 重要財報發布日期、EPS 速報與財務指標解析，即將上線。
               </p>
               <span className={styles.comingSoonBadge}>Coming Soon</span>
+            </div>
+          )}
+
+          {/* ── 個股簡評（Pro 遮罩）── */}
+          {activeTab === "analysis" && (
+            <div className={styles.comingSoon}>
+              <div className={styles.comingSoonIcon}>🔍</div>
+              <h2 className={styles.comingSoonTitle}>AI 個股簡評</h2>
+              <p className={styles.comingSoonDesc}>
+                輸入股票代號，AI 即時彙整近期相關新聞與市場情緒分析。
+              </p>
+              {!isPro ? (
+                <Link to="/pricing" className={styles.upgradeBtn}>
+                  升級 Pro 解鎖
+                </Link>
+              ) : (
+                <span className={styles.comingSoonBadge}>Coming Soon</span>
+              )}
             </div>
           )}
 
