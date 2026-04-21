@@ -16,6 +16,7 @@ import AiPage from "@/pages/AiPage";
 import PaymentResult from "@/pages/PaymentResult";
 import AdminPage from "@/pages/AdminPage";
 import FriendDrawer from "@/components/ui/FriendDrawer";
+import ScrollTopBtn from "@/components/ui/ScrollTopBtn";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
 
@@ -71,6 +72,7 @@ export default function App() {
         </Routes>
         <Footer />
         <FriendDrawer />
+        <ScrollTopBtn />
       </BrowserRouter>
     </HelmetProvider>
   );
