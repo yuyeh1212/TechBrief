@@ -1,15 +1,15 @@
 // 右側抽屜容器
-// 收起時：translateX(content寬度) → 只有標籤突出在右側
+// 收起時：translateX(content寬度) → 只有膠囊標籤突出在右側
 // 展開時：translateX(0) → 完整顯示
 .drawer {
   position: fixed;
   top: 50%;
   right: 0;
-  transform: translateY(-50%) translateX(320px); // 收起 = 內容寬度
+  transform: translateY(-50%) translateX(300px);
   z-index: 90;
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: center;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.open {
@@ -17,42 +17,39 @@
   }
 
   @media (max-width: 480px) {
-    top: auto;
-    bottom: 100px;
-    transform: translateY(0) translateX(280px);
+    transform: translateY(-50%) translateX(260px);
 
     &.open {
-      transform: translateY(0) translateX(0);
+      transform: translateY(-50%) translateX(0);
     }
   }
 }
 
-// 標籤按鈕（永遠可見，貼著右側邊緣突出）
+// 膠囊標籤按鈕（右側邊緣突出，左圓右平貼邊）
 .tab {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 5px;
-  background: rgba(18, 20, 36, 0.82);
-  border: 1px solid rgba(60, 73, 78, 0.35);
+  padding: 22px 7px;
+  background: var(--surface-container);
+  border: 1px solid rgba(80, 110, 120, 0.5);
   border-right: none;
-  border-radius: 8px 0 0 8px;
+  border-radius: 14px 0 0 14px;
   color: var(--on-surface-variant);
   font-size: 10px;
   font-family: var(--font-headline);
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   cursor: pointer;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   white-space: nowrap;
   flex-shrink: 0;
-  opacity: 0.7;
-  transition: color 0.2s, opacity 0.2s, border-color 0.2s;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
 
   &:hover {
     color: var(--primary-container);
-    opacity: 1;
-    border-color: rgba(0, 230, 180, 0.35);
+    background: rgba(0, 200, 160, 0.12);
+    border-color: rgba(0, 230, 180, 0.45);
   }
 }
 
@@ -63,12 +60,12 @@
   border-right: none;
   border-radius: 14px 0 0 14px;
   padding: 20px 16px 20px 20px;
-  width: 320px;
+  width: 300px;
   max-height: 80vh;
   overflow-y: auto;
 
   @media (max-width: 480px) {
-    width: 280px;
+    width: 260px;
   }
 }
 
