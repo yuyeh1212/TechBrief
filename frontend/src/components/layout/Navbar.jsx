@@ -25,7 +25,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
-  const { user, logout, loginWithGoogle, isPro, isMini } = useAuth();
+  const { user, logout, loginWithGoogle, isPro, isMini, isAdmin } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [financeOpen, setFinanceOpen] = useState(false);
@@ -282,6 +282,14 @@ export default function Navbar() {
                   <p className={styles.dropdownEmail}>{user.email}</p>
                 </div>
                 <div className={styles.userDropdownDivider} />
+                {isAdmin && (
+                  <Link to="/admin" className={`${styles.userDropdownItem} ${styles.adminItem}`} onClick={() => setUserMenuOpen(false)}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    管理後台
+                  </Link>
+                )}
                 <Link to="/account" className={styles.userDropdownItem} onClick={() => setUserMenuOpen(false)}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5"/>
