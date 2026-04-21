@@ -101,10 +101,10 @@
 
 - [x] 登出後重新登入無需刷新頁面（Navbar 監聽 user 變 null 時補 renderButton，桌面版與手機版皆修正）
 - [x] 文章內股票代號可點擊（Pro 用戶股票標籤改為 Link，導向 /finance?tab=analysis&ticker=代號；FinancePage 個股簡評 tab 讀取 ticker 並顯示提示）
+- [x] AI 個股簡評功能實作（GET /api/analysis/stock，Gemini Flash 模型，搜尋近 30 天 DB 相關文章作為上下文）
+- [x] 管理員後台（/admin 頁面，JWT 驗證 + ADMIN_EMAILS 白名單，含統計/用戶管理/文章管理/手動觸發任務；auth 回應新增 is_admin 欄位）
 
 ### 待執行
 
-- [ ] AI 個股簡評功能實作（前端輸入介面 + 後端 API）
 - [ ] 股票掃描模擬器（Max）
-- [ ] 管理員後台
 - [ ] Resend 網域驗證（讓提醒信可寄給任意用戶）

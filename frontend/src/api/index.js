@@ -44,3 +44,29 @@ export const createOrder = (plan) =>
 
 export const getOrderStatus = (trade_no) =>
   api.get(`/payment/order/${trade_no}`).then((r) => r.data);
+
+// 個股簡評（Pro 限定）
+export const getStockAnalysis = (ticker) =>
+  api.get("/analysis/stock", { params: { ticker }, timeout: 30000 }).then((r) => r.data);
+
+// 管理員後台
+export const adminGetStats = () =>
+  api.get("/admin/stats").then((r) => r.data);
+
+export const adminListUsers = (params = {}) =>
+  api.get("/admin/users", { params }).then((r) => r.data);
+
+export const adminUpdateUserPlan = (userId, plan, expires_days = 30) =>
+  api.patch(`/admin/users/${userId}/plan`, { plan, expires_days }).then((r) => r.data);
+
+export const adminListArticles = (params = {}) =>
+  api.get("/admin/articles", { params }).then((r) => r.data);
+
+export const adminDeleteArticle = (articleId) =>
+  api.delete(`/admin/articles/${articleId}`).then((r) => r.data);
+
+export const adminTriggerNews = () =>
+  api.post("/admin/trigger-news-jwt").then((r) => r.data);
+
+export const adminTriggerExpiry = () =>
+  api.post("/admin/trigger-expiry-jwt").then((r) => r.data);

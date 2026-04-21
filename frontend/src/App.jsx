@@ -14,6 +14,7 @@ import FinancePage from "@/pages/FinancePage";
 import AccountPage from "@/pages/AccountPage";
 import AiPage from "@/pages/AiPage";
 import PaymentResult from "@/pages/PaymentResult";
+import AdminPage from "@/pages/AdminPage";
 import FriendDrawer from "@/components/ui/FriendDrawer";
 import { unsubscribe } from "@/api";
 import "@/styles/globals.scss";
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/finance" element={<FinancePage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/payment/result" element={<PaymentResult />} />
+          <Route path="/admin" element={<AdminPage />} />
 
           {/* Unsubscribe 頁面（簡易） */}
           <Route path="/unsubscribe" element={<UnsubscribePage />} />

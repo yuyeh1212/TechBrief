@@ -36,6 +36,7 @@ class UserResponse(BaseModel):
     picture: str | None
     plan: str
     plan_expires_at: datetime | None = None
+    is_admin: bool = False
 
     class Config:
         from_attributes = True
@@ -83,6 +84,7 @@ async def google_login(body: GoogleLoginRequest, db: AsyncSession = Depends(get_
     token = create_access_token(user.id)
     user_data = UserResponse.model_validate(user)
     user_data.plan = _effective_plan(user)
+    user_data.is_admin = user.email in _admin_emails()
     return AuthResponse(access_token=token, user=user_data)
 
 
@@ -91,4 +93,5 @@ async def get_me(current_user: User = Depends(get_current_user)):
     """取得目前登入使用者資訊"""
     user_data = UserResponse.model_validate(current_user)
     user_data.plan = _effective_plan(current_user)
+    user_data.is_admin = current_user.email in _admin_emails()
     return user_data

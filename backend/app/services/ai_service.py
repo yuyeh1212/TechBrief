@@ -123,6 +123,56 @@ async def generate_article(raw_article: Dict) -> Dict | None:
     return result
 
 
+STOCK_ANALYSIS_PROMPT = """你是 TechBrief 的 AI 股票分析師，擅長根據新聞資料提供個股簡評。
+
+請根據提供的資訊，以繁體中文輸出個股簡評，必須以合法 JSON 格式回應，不要加 markdown code block：
+{
+  "company_name": "公司名稱（含英文代號，例如：輝達 NVDA）",
+  "sentiment": "positive 或 neutral 或 negative 其中一個英文字",
+  "sentiment_label": "正面 或 中立 或 負面",
+  "overview": "2-3句話，說明該股票／公司目前的主要動態",
+  "key_points": ["重點1（1-2句）", "重點2", "重點3"],
+  "conclusion": "1-2句結語，提醒投資人留意相關風險"
+}"""
+
+
+async def generate_stock_analysis(ticker: str, articles: list) -> Dict | None:
+    """Gemini Flash：股票代號 + 相關文章 → 個股簡評"""
+    if articles:
+        articles_text = "\n\n".join([
+            f"標題：{a['title']}\n摘要：{a['summary']}"
+            for a in articles[:5]
+        ])
+        user_prompt = f"""股票代號：{ticker}
+
+以下是近期相關新聞（來自 TechBrief 資料庫）：
+{articles_text}
+
+請根據上述新聞，提供 {ticker} 的個股簡評，以 JSON 格式回應。"""
+    else:
+        user_prompt = f"""股票代號：{ticker}
+
+目前資料庫中沒有近期相關新聞，請根據你對該公司的基本了解（以近年市場動態為主）提供個股簡評。
+請在 conclusion 中加入「本分析基於 AI 訓練資料，非即時市場資訊」的說明。
+以 JSON 格式回應。"""
+
+    raw = await _call_openrouter(
+        messages=[
+            {"role": "system", "content": STOCK_ANALYSIS_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+        model=settings.OPENROUTER_FLASH_MODEL,
+        max_tokens=1200,
+    )
+    if not raw:
+        return None
+    result = _parse_json(raw)
+    if not result:
+        return None
+    result["has_articles"] = len(articles) > 0
+    return result
+
+
 async def generate_card_summary(title: str, content: str) -> str | None:
     """Gemini Flash：文章 → 卡片短摘要（2-3句）"""
     prompt = f"""請用繁體中文為以下文章寫一段卡片摘要，2-3句話，簡潔有力，適合在新聞卡片上顯示：

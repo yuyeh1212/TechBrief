@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.database import init_db
 from app.tasks.scheduler import start_scheduler
-from app.api import articles, subscribers, line_webhook, admin, auth, payment
+from app.api import articles, subscribers, line_webhook, admin, auth, payment, analysis
 from app.models import user as _user_model   # 確保 User table 被 Base 掃到
 from app.models import order as _order_model  # 確保 Order table 被 Base 掃到
 
@@ -41,6 +41,7 @@ app.include_router(line_webhook.router, prefix="/api")
 app.include_router(admin.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(payment.router)
+app.include_router(analysis.router, prefix="/api")
 
 
 @app.get("/")

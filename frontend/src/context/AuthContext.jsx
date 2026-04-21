@@ -53,9 +53,10 @@ export function AuthProvider({ children }) {
   const isMax = user?.plan === "max";
   const isPro = user?.plan === "pro" || isMax;
   const isMini = user?.plan === "mini" || isPro;
+  const isAdmin = user?.is_admin === true;
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, refreshUser, isMax, isPro, isMini }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, refreshUser, isMax, isPro, isMini, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useSearchParams } from "react-router-dom";
-import { getArticles } from "@/api";
+import { getArticles, getStockAnalysis } from "@/api";
 import { useAuth } from "@/context/AuthContext";
 import ArticleCard from "@/components/ui/ArticleCard";
 import SubscribeBar from "@/components/ui/SubscribeBar";
@@ -22,6 +22,13 @@ export default function FinancePage() {
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabParam || "news");
 
+  // 個股簡評 state
+  const [tickerInput, setTickerInput] = useState(searchParams.get("ticker") || "");
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [analysisError, setAnalysisError] = useState("");
+  const inputRef = useRef(null);
+
   useEffect(() => {
     if (tabParam && ["news", "reports", "analysis", "stocks"].includes(tabParam)) {
       setActiveTab(tabParam);
@@ -36,6 +43,37 @@ export default function FinancePage() {
       setSearchParams({});
     } else {
       setSearchParams({ tab: key });
+    }
+    // 切換 tab 時清除分析結果
+    if (key !== "analysis") {
+      setAnalysisResult(null);
+      setAnalysisError("");
+    }
+  };
+
+  // 從 URL ticker 參數自動觸發分析（由文章頁點擊股票代號進入）
+  useEffect(() => {
+    const ticker = searchParams.get("ticker");
+    if (ticker && activeTab === "analysis" && isPro && !analysisResult && !analysisLoading) {
+      setTickerInput(ticker);
+      handleAnalysis(ticker);
+    }
+  }, [activeTab, isPro]);
+
+  const handleAnalysis = async (overrideTicker) => {
+    const query = (overrideTicker || tickerInput).trim().toUpperCase();
+    if (!query) return;
+    setAnalysisLoading(true);
+    setAnalysisError("");
+    setAnalysisResult(null);
+    try {
+      const data = await getStockAnalysis(query);
+      setAnalysisResult(data);
+    } catch (e) {
+      const msg = e.response?.data?.detail || "分析失敗，請稍後再試";
+      setAnalysisError(msg);
+    } finally {
+      setAnalysisLoading(false);
     }
   };
   const [articles, setArticles] = useState([]);
@@ -169,31 +207,134 @@ export default function FinancePage() {
             </div>
           )}
 
-          {/* ── 個股簡評（Pro 遮罩）── */}
-          {activeTab === "analysis" && (() => {
-            const ticker = searchParams.get("ticker") || "";
-            return (
-              <div className={styles.comingSoon}>
-                <div className={styles.comingSoonIcon}>🔍</div>
-                <h2 className={styles.comingSoonTitle}>AI 個股簡評</h2>
-                {ticker && isPro && (
-                  <p className={styles.comingSoonTickerHint}>
-                    即將分析：<strong>{ticker}</strong>
+          {/* ── 個股簡評 ── */}
+          {activeTab === "analysis" && (
+            <div className={styles.analysisSection}>
+              {!isPro ? (
+                /* 非 Pro：升級遮罩 */
+                <div className={styles.comingSoon}>
+                  <div className={styles.comingSoonIcon}>🔍</div>
+                  <h2 className={styles.comingSoonTitle}>AI 個股簡評</h2>
+                  <p className={styles.comingSoonDesc}>
+                    輸入股票代號，AI 即時彙整近期相關新聞與市場情緒分析。
                   </p>
-                )}
-                <p className={styles.comingSoonDesc}>
-                  輸入股票代號，AI 即時彙整近期相關新聞與市場情緒分析。
-                </p>
-                {!isPro ? (
                   <Link to="/pricing" className={styles.upgradeBtn}>
                     升級 Pro 解鎖
                   </Link>
-                ) : (
-                  <span className={styles.comingSoonBadge}>Coming Soon</span>
-                )}
-              </div>
-            );
-          })()}
+                </div>
+              ) : (
+                /* Pro 用戶：完整功能 */
+                <>
+                  {/* 搜尋列 */}
+                  <div className={styles.analysisSearchWrap}>
+                    <div className={styles.analysisSearchBox}>
+                      <span className={styles.analysisSearchIcon}>📊</span>
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        className={styles.analysisInput}
+                        placeholder="輸入股票代號，例如 NVDA 或 2330.TW"
+                        value={tickerInput}
+                        onChange={(e) => setTickerInput(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => e.key === "Enter" && handleAnalysis()}
+                        maxLength={20}
+                      />
+                      <button
+                        className={styles.analysisBtn}
+                        onClick={() => handleAnalysis()}
+                        disabled={analysisLoading || !tickerInput.trim()}
+                      >
+                        {analysisLoading ? "分析中…" : "開始分析"}
+                      </button>
+                    </div>
+                    <p className={styles.analysisHint}>
+                      支援台股（如 2330.TW）與美股（如 NVDA、AAPL）
+                    </p>
+                  </div>
+
+                  {/* 載入中 */}
+                  {analysisLoading && (
+                    <div className={styles.analysisLoading}>
+                      <div className={styles.loadingSpinner} />
+                      <p>AI 正在彙整相關資訊，約需 5-10 秒…</p>
+                    </div>
+                  )}
+
+                  {/* 錯誤 */}
+                  {analysisError && !analysisLoading && (
+                    <div className={styles.analysisError}>{analysisError}</div>
+                  )}
+
+                  {/* 結果卡片 */}
+                  {analysisResult && !analysisLoading && (
+                    <div className={styles.analysisCard}>
+                      {/* 標頭 */}
+                      <div className={styles.analysisCardHeader}>
+                        <div>
+                          <span className={styles.analysisTicker}>{analysisResult.ticker}</span>
+                          <span className={styles.analysisCompany}>{analysisResult.company_name}</span>
+                        </div>
+                        <span className={`${styles.sentimentBadge} ${styles[`sentiment_${analysisResult.sentiment}`]}`}>
+                          {analysisResult.sentiment === "positive" ? "▲" : analysisResult.sentiment === "negative" ? "▼" : "◆"} {analysisResult.sentiment_label}
+                        </span>
+                      </div>
+
+                      {/* 概覽 */}
+                      <p className={styles.analysisOverview}>{analysisResult.overview}</p>
+
+                      {/* 關鍵重點 */}
+                      <div className={styles.analysisPoints}>
+                        <p className={styles.analysisPointsTitle}>關鍵重點</p>
+                        <ul>
+                          {analysisResult.key_points?.map((pt, i) => (
+                            <li key={i}>{pt}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* 結語 */}
+                      <p className={styles.analysisConclusion}>{analysisResult.conclusion}</p>
+
+                      {/* 資料來源 */}
+                      {analysisResult.related_articles?.length > 0 && (
+                        <div className={styles.analysisRelated}>
+                          <p className={styles.analysisRelatedTitle}>參考文章</p>
+                          <div className={styles.analysisRelatedList}>
+                            {analysisResult.related_articles.map((a) => (
+                              <Link
+                                key={a.slug}
+                                to={`/article/${a.slug}`}
+                                className={styles.analysisRelatedItem}
+                              >
+                                {a.title}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {!analysisResult.has_articles && (
+                        <p className={styles.analysisNoData}>
+                          ⚠️ 資料庫暫無近期相關文章，以上分析基於 AI 訓練資料
+                        </p>
+                      )}
+
+                      <p className={styles.analysisDisclaimer}>
+                        本分析由 AI 自動生成，僅供參考，不構成任何投資建議。
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 初始空狀態 */}
+                  {!analysisResult && !analysisLoading && !analysisError && (
+                    <div className={styles.analysisEmpty}>
+                      <div className={styles.analysisEmptyIcon}>🔍</div>
+                      <p>輸入股票代號，AI 即時彙整近期相關新聞與情緒分析</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
 
           {/* ── 股票監控（Max 遮罩）── */}
           {activeTab === "stocks" && (
