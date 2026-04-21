@@ -736,3 +736,65 @@
   margin: 0;
   text-align: center;
 }
+
+/* ── 歷史查詢記錄 ── */
+.historyWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.historyLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.historyTags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.historyTag {
+  background: var(--surface-container);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-headline);
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: rgba(0, 229, 255, 0.08);
+    border-color: rgba(0, 229, 255, 0.45);
+  }
+}
+
+.historyClear {
+  background: transparent;
+  border: none;
+  color: var(--on-surface-variant);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 6px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
+  }
+}

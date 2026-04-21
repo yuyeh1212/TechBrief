@@ -29,6 +29,27 @@ export default function FinancePage() {
   const [analysisError, setAnalysisError] = useState("");
   const inputRef = useRef(null);
 
+  // 歷史查詢記錄（localStorage，最多 5 筆）
+  const HISTORY_KEY = "tb_stock_history";
+  const [history, setHistory] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const saveHistory = (ticker) => {
+    const updated = [ticker, ...history.filter((t) => t !== ticker)].slice(0, 5);
+    setHistory(updated);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem(HISTORY_KEY);
+  };
+
   useEffect(() => {
     if (tabParam && ["news", "reports", "analysis", "stocks"].includes(tabParam)) {
       setActiveTab(tabParam);
@@ -69,6 +90,7 @@ export default function FinancePage() {
     try {
       const data = await getStockAnalysis(query);
       setAnalysisResult(data);
+      saveHistory(query);
     } catch (e) {
       const msg = e.response?.data?.detail || "分析失敗，請稍後再試";
       setAnalysisError(msg);
@@ -251,6 +273,30 @@ export default function FinancePage() {
                       支援台股（如 2330.TW）與美股（如 NVDA、AAPL）
                     </p>
                   </div>
+
+                  {/* 歷史查詢記錄 */}
+                  {history.length > 0 && (
+                    <div className={styles.historyWrap}>
+                      <span className={styles.historyLabel}>最近查詢</span>
+                      <div className={styles.historyTags}>
+                        {history.map((t) => (
+                          <button
+                            key={t}
+                            className={styles.historyTag}
+                            onClick={() => {
+                              setTickerInput(t);
+                              handleAnalysis(t);
+                            }}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                      <button className={styles.historyClear} onClick={clearHistory}>
+                        清除
+                      </button>
+                    </div>
+                  )}
 
                   {/* 載入中 */}
                   {analysisLoading && (
