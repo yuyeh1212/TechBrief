@@ -95,16 +95,42 @@
 
 ---
 
-## v2.2 — 進行中
+## v2.2 — 2026-04-21
 
-### 已完成
+### 功能新增
 
-- [x] 登出後重新登入無需刷新頁面（Navbar 監聽 user 變 null 時補 renderButton，桌面版與手機版皆修正）
-- [x] 文章內股票代號可點擊（Pro 用戶股票標籤改為 Link，導向 /finance?tab=analysis&ticker=代號；FinancePage 個股簡評 tab 讀取 ticker 並顯示提示）
-- [x] AI 個股簡評功能實作（GET /api/analysis/stock，Gemini Flash 模型，搜尋近 30 天 DB 相關文章作為上下文）
-- [x] 管理員後台（/admin 頁面，JWT 驗證 + ADMIN_EMAILS 白名單，含統計/用戶管理/文章管理/手動觸發任務；auth 回應新增 is_admin 欄位）
+- 登出後重新登入無需刷新頁面（Navbar 監聽 user 變 null 時補 renderButton，桌面版與手機版皆修正）
+- 文章內股票代號可點擊（Pro 用戶股票標籤改為 Link，導向 /finance?tab=analysis&ticker=代號；FinancePage 個股簡評 tab 讀取 ticker 並自動帶入分析）
+- AI 個股簡評正式上線（GET /api/analysis/stock，Gemini Flash Lite 模型，搜尋近 30 天 DB 相關文章作為上下文；無資料時以訓練知識生成並附免責說明）
+- 管理員後台（/admin 頁面，JWT + ADMIN_EMAILS 白名單驗證）：
+  - 統計總覽：總用戶、付費用戶、文章數、今日新增、方案分佈
+  - 用戶管理：列表、方案篩選、直接修改用戶方案
+  - 文章管理：列表、分類篩選、刪除文章
+  - 手動觸發：新聞任務、到期檢查任務
+  - auth 回應新增 is_admin 欄位，Navbar 用戶下拉選單顯示金色「管理後台」入口（限 admin 可見）
 
-### 待執行
+---
 
-- [ ] 股票掃描模擬器（Max）
-- [ ] Resend 網域驗證（讓提醒信可寄給任意用戶）
+## v2.3 — 規劃中
+
+### 體驗優化
+
+- [ ] 換頁統一滾回頂部（ScrollToTop 全域元件，監聽 pathname 變化）← 已完成
+- [ ] 友站抽屜縮小（標籤改為「友站連結」四字、拿掉 chevron、padding 縮緊、降低 opacity）← 已完成
+- [ ] 首頁卡片熱門排序 / 今日精選置頂（利用現有 view_count 欄位，當日最高瀏覽量置頂大卡）
+- [ ] 文章頁預估閱讀時間（純前端，字數 ÷ 400 字/分鐘，顯示於 meta 列）
+- [ ] 右下角回頂按鈕（滾動超過一定距離後出現，長文章頁適用）
+
+### Pro 功能加深
+
+- [ ] 個股簡評歷史查詢記錄（localStorage 存最近 5 筆 ticker，可點擊重查）
+- [ ] 財經新聞情緒標籤（AI 生成財經文章時輸出 sentiment 欄位，卡片顯示正面／中立／負面標籤）
+
+### 待更新（正式上線前）
+
+- [ ] Free 用戶累積閱讀 5 篇後，文章頁底部出現低調升級橫幅（localStorage 計數，非強制遮罩）
+- [ ] 深色/淺色模式切換（工程量較大，保留評估）
+- [ ] Mini 電子報樣式優化（需先規劃個人化方向）
+- [ ] ECPay 綠界金流切換正式環境（商店代號與 API URL 更換）
+- [ ] Resend 網域驗證（讓到期提醒信可寄給所有用戶，非僅自己信箱）
+- [ ] 股票掃描模擬器（Max 方案，台股自訂篩選條件）

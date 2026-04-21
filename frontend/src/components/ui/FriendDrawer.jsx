@@ -55,24 +55,9 @@ export default function FriendDrawer() {
       <button
         className={styles.tab}
         onClick={() => setOpen((o) => !o)}
-        aria-label="友站推薦"
+        aria-label="友站連結"
       >
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          className={`${styles.tabChevron} ${open ? styles.rotated : ""}`}
-        >
-          <path
-            d="M15 18l-6-6 6-6"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span>友站推薦</span>
+        <span>友站連結</span>
       </button>
 
       {/* 抽屜內容 */}
