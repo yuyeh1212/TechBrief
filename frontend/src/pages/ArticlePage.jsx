@@ -31,6 +31,13 @@ const CATEGORY_PATH = {
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&q=80";
 
+// 預估閱讀時間：去除 HTML 標籤後，以每分鐘 400 字計算
+function estimateReadingTime(html = "") {
+  const text = html.replace(/<[^>]+>/g, "");
+  const minutes = Math.ceil(text.length / 400);
+  return minutes < 1 ? 1 : minutes;
+}
+
 export default function ArticlePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -185,6 +192,18 @@ export default function ArticlePage() {
                   />
                 </svg>
                 {article.view_count} 次瀏覽
+              </span>
+              <span className={styles.metaItem}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                約 {estimateReadingTime(article.content)} 分鐘閱讀
               </span>
             </div>
           </header>
