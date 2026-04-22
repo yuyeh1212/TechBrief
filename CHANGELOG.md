@@ -125,9 +125,7 @@
 
 - [x] 首頁今日精選置頂：新增 `GET /articles/today-hot` 端點（台灣時間 UTC+8，當日 view_count 最高），首頁並聯請求，若有瀏覽量 > 0 的文章則置頂並顯示「今日精選 🔥 熱門」標籤，否則退回最新文章邏輯
 
-### 待執行
-
-- [ ] 財經新聞情緒標籤（AI 生成財經文章時輸出 sentiment 欄位，卡片顯示正面／中立／負面標籤）
+- [x] 財經新聞情緒標籤：SYSTEM_PROMPT 新增 sentiment 欄位要求（finance 分類專屬），DB 加 `sentiment VARCHAR(20)` 欄，排程器儲存並驗證合法值，ArticleCard 顯示利多（綠）／中立（灰）／利空（紅）標籤
 
 ### 待更新（正式上線前）
 

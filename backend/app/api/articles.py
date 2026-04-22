@@ -37,9 +37,9 @@ class ArticleListOut(BaseModel):
     summary: str
     category: str
     card_summary: Optional[str]
-    category: str
     image_url: Optional[str]
     source_name: Optional[str]
+    sentiment: Optional[str]
     view_count: int
     created_at: datetime
 

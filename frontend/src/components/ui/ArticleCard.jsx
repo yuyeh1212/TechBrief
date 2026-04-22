@@ -15,8 +15,14 @@ const CATEGORY_LABEL = {
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80";
 
+const SENTIMENT_CONFIG = {
+  positive: { label: "利多", className: "sentimentPositive" },
+  neutral:  { label: "中立", className: "sentimentNeutral" },
+  negative: { label: "利空", className: "sentimentNegative" },
+};
+
 export default function ArticleCard({ article, featured = false }) {
-  const { title, slug, summary, category, image_url, source_name, created_at, view_count } = article;
+  const { title, slug, summary, category, image_url, source_name, created_at, view_count, sentiment } = article;
 
   return (
     <Link to={`/article/${slug}`} className={`${styles.card} ${featured ? styles.featured : ""}`}>
@@ -35,6 +41,11 @@ export default function ArticleCard({ article, featured = false }) {
         <h2 className={`${styles.title} ${featured ? styles.featuredTitle : ""}`}>
           {title}
         </h2>
+        {category === "finance" && sentiment && SENTIMENT_CONFIG[sentiment] && (
+          <span className={`${styles.sentimentBadge} ${styles[SENTIMENT_CONFIG[sentiment].className]}`}>
+            {SENTIMENT_CONFIG[sentiment].label}
+          </span>
+        )}
         <p className={styles.summary}>{summary}</p>
 
         <div className={styles.meta}>

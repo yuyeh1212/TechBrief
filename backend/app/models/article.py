@@ -29,6 +29,7 @@ class Article(Base):
     source_name: Mapped[str] = mapped_column(String(200), nullable=True)
     card_summary: Mapped[str] = mapped_column(Text, nullable=True)
     related_stocks: Mapped[str] = mapped_column(String(500), nullable=True)
+    sentiment: Mapped[str] = mapped_column(String(20), nullable=True)  # positive / neutral / negative（僅財經文章）
     is_published: Mapped[bool] = mapped_column(Boolean, default=True)
     is_published: Mapped[bool] = mapped_column(Boolean, default=True)
     view_count: Mapped[int] = mapped_column(Integer, default=0)

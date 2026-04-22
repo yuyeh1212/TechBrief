@@ -72,6 +72,10 @@ async def _generate_articles_batch(raw_list: list, quota: int, label: str) -> li
             else:
                 category = generated.get("category", "tech")
 
+            # 財經文章情緒標籤（positive / neutral / negative）
+            sentiment_raw = generated.get("sentiment", "")
+            sentiment = sentiment_raw if sentiment_raw in ("positive", "neutral", "negative") else None
+
             article = Article(
                 title=generated["title"],
                 slug=slug,
@@ -83,6 +87,7 @@ async def _generate_articles_batch(raw_list: list, quota: int, label: str) -> li
                 source_url=raw["url"],
                 source_name=raw["source_name"],
                 related_stocks=related_stocks,
+                sentiment=sentiment,
             )
             db.add(article)
             try:

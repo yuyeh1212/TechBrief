@@ -138,3 +138,35 @@
   font-size: 11px;
   color: var(--outline);
 }
+
+/* 財經情緒標籤 */
+.sentimentBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-headline);
+  letter-spacing: 0.5px;
+  padding: 2px 10px;
+  border-radius: 100px;
+  border-width: 1px;
+  border-style: solid;
+  width: fit-content;
+}
+
+.sentimentPositive {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.sentimentNeutral {
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.sentimentNegative {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+}
