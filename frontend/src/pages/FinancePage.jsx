@@ -178,7 +178,6 @@ export default function FinancePage() {
                 onClick={() => handleTabChange(tab.key)}
               >
                 {tab.label}
-                {tab.key === "weekly" && <span className={styles.proBadge}>Pro</span>}
                 {tab.key === "stocks" && <span className={styles.proBadge}>Max</span>}
               </button>
             ))}
@@ -421,7 +420,7 @@ export default function FinancePage() {
                   <div className={styles.comingSoonIcon}>📭</div>
                   <h2 className={styles.comingSoonTitle}>本週報告尚未產生</h2>
                   <p className={styles.comingSoonDesc}>
-                    每週一早上 09:30 自動更新，若剛升級 Pro 請於下週一查看第一份報告。
+                    每週日晚上 20:00 自動更新，若剛升級 Pro 請於本週日後查看第一份報告。
                   </p>
                 </div>
               ) : (

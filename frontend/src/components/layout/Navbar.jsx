@@ -13,6 +13,7 @@ const FINANCE_SUBMENU = [
   { label: "財經新聞", to: "/finance", desc: "市場動態" },
   { label: "財報", to: "/finance?tab=reports", desc: "即將推出" },
   { label: "個股簡評", to: "/finance?tab=analysis", desc: "AI 分析" },
+  { label: "每週精選", to: "/finance?tab=weekly", desc: "Pro 精選標的" },
   { label: "股票監控", to: "/finance?tab=stocks", desc: "Max 限定" },
 ];
 

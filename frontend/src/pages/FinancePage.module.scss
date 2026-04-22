@@ -223,6 +223,7 @@
   font-size: 15px;
   color: var(--on-surface-variant);
   max-width: 420px;
+  margin: 0 auto;
   line-height: 1.7;
 }
 
@@ -819,6 +820,8 @@
 .weeklyEmpty {
   text-align: center;
   padding: 60px 24px;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 .weeklyHeader {
