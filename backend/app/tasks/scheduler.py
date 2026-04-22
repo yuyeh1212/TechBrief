@@ -13,8 +13,9 @@ from app.models.article import Article
 from app.models.subscriber import Subscriber
 from app.models.user import User, UserPlan
 from app.services.rss_service import fetch_rss_articles, fetch_rss_articles_by_type
-from app.services.ai_service import generate_article, generate_card_summary, generate_article_from_youtube
-from app.services.email_service import send_newsletter, send_expiry_reminder
+from app.services.ai_service import generate_article, generate_card_summary, generate_article_from_youtube, generate_weekly_picks
+from app.services.email_service import send_newsletter, send_expiry_reminder, send_weekly_report_notification
+from app.models.weekly_report import WeeklyReport
 from app.services.youtube_service import YOUTUBE_SOURCES, fetch_youtube_videos, fetch_transcript
 
 
@@ -287,6 +288,100 @@ async def subscription_expiry_job():
             await db.rollback()
 
 
+async def weekly_report_job():
+    """每週一早上 09:30 執行：彙整本週正面財經文章 → 生成精選看好標的 → 儲存 + 發送 Email"""
+    import json
+    from datetime import date
+    from sqlalchemy import insert
+    from app.models.article import ArticleCategory
+
+    print(f"[WeeklyReport] 開始生成週報 {datetime.now(timezone.utc).isoformat()}")
+
+    # 往回取 7 天（台灣時間），作為本週報告的起始點
+    now_taipei = datetime.now(timezone(timedelta(hours=8)))
+    week_start = (now_taipei - timedelta(days=6)).date()  # 本週日往前 6 天 = 上週一
+    seven_days_ago_utc = (datetime.now(timezone.utc) - timedelta(days=7)).replace(tzinfo=None)
+
+    async with AsyncSessionLocal() as db:
+        # 查近 7 天正面財經文章
+        result = await db.execute(
+            select(Article).where(
+                Article.category == ArticleCategory.FINANCE,
+                Article.sentiment == "positive",
+                Article.is_published == True,
+                Article.created_at >= seven_days_ago_utc,
+            ).order_by(Article.created_at.desc())
+        )
+        articles = result.scalars().all()
+
+    if not articles:
+        print("[WeeklyReport] 本週無正面財經文章，跳過")
+        return
+
+    print(f"[WeeklyReport] 找到 {len(articles)} 篇正面財經文章，開始生成...")
+
+    articles_data = [
+        {"title": a.title, "summary": a.summary, "related_stocks": a.related_stocks or ""}
+        for a in articles
+    ]
+
+    report = await generate_weekly_picks(articles_data)
+    if not report:
+        print("[WeeklyReport] AI 生成失敗，跳過")
+        return
+
+    picks_json = json.dumps(report.get("picks", []), ensure_ascii=False)
+
+    async with AsyncSessionLocal() as db:
+        # 若本週已有報告則更新，否則新增
+        existing = await db.execute(
+            select(WeeklyReport).where(WeeklyReport.week_start == week_start)
+        )
+        existing_report = existing.scalar_one_or_none()
+
+        if existing_report:
+            existing_report.market_overview = report.get("market_overview", "")
+            existing_report.picks = picks_json
+            existing_report.disclaimer = report.get("disclaimer", "")
+            existing_report.article_count = len(articles)
+        else:
+            db.add(WeeklyReport(
+                week_start=week_start,
+                market_overview=report.get("market_overview", ""),
+                picks=picks_json,
+                disclaimer=report.get("disclaimer", ""),
+                article_count=len(articles),
+            ))
+        try:
+            await db.commit()
+            print(f"[WeeklyReport] 週報已存入 DB（week_start={week_start}）")
+        except Exception as e:
+            print(f"[WeeklyReport] DB 儲存失敗: {e}")
+            await db.rollback()
+            return
+
+    # 發送 Email 通知給所有 Pro/Max 用戶
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            select(User).where(User.plan.in_([UserPlan.PRO, UserPlan.MAX]))
+        )
+        pro_users = result.scalars().all()
+        pro_emails = [u.email for u in pro_users]
+
+    if pro_emails:
+        picks_list = report.get("picks", [])
+        stats = await send_weekly_report_notification(
+            emails=pro_emails,
+            week_start=str(week_start),
+            picks=picks_list,
+        )
+        print(f"[WeeklyReport] Email 發送完成: {stats}")
+    else:
+        print("[WeeklyReport] 無 Pro/Max 用戶，跳過 Email")
+
+    print(f"[WeeklyReport] 完成！共精選 {len(report.get('picks', []))} 檔標的")
+
+
 def start_scheduler():
     scheduler.add_job(
         daily_news_job,
@@ -312,6 +407,12 @@ def start_scheduler():
         subscription_expiry_job,
         trigger=CronTrigger(hour=9, minute=0, timezone="Asia/Taipei"),
         id="subscription_expiry",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        weekly_report_job,
+        trigger=CronTrigger(day_of_week="sun", hour=20, minute=0, timezone="Asia/Taipei"),
+        id="weekly_report",
         replace_existing=True,
     )
     scheduler.start()

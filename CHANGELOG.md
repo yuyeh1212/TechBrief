@@ -125,6 +125,16 @@
 
 ---
 
+---
+
+## v2.4 — 進行中
+
+### 已完成
+
+- 每週精選看好標的（Pro 限定）：新增 `WeeklyReport` 資料表，每週一 09:30 排程彙整本週 `sentiment=positive` 財經文章，Gemini Flash Lite 生成市場概況 + 最多 5 檔精選標的；FinancePage 新增「每週精選」tab，卡片式呈現各標的；完成後自動 Email 通知所有 Pro/Max 用戶
+
+---
+
 ## 待更新（正式上線前）
 
 - [ ] Free 用戶累積閱讀 5 篇後，文章頁底部出現低調升級橫幅（localStorage 計數，非強制遮罩）

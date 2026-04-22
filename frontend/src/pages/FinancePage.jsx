@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useSearchParams } from "react-router-dom";
-import { getArticles, getStockAnalysis } from "@/api";
+import { getArticles, getStockAnalysis, getWeeklyReport } from "@/api";
 import { useAuth } from "@/context/AuthContext";
 import ArticleCard from "@/components/ui/ArticleCard";
 import SubscribeBar from "@/components/ui/SubscribeBar";
@@ -11,6 +11,7 @@ const TABS = [
   { key: "news", label: "財經新聞" },
   { key: "reports", label: "財報" },
   { key: "analysis", label: "個股簡評" },
+  { key: "weekly", label: "每週精選" },
   { key: "stocks", label: "股票監控" },
 ];
 
@@ -18,6 +19,11 @@ const PAGE_SIZE = 9;
 
 export default function FinancePage() {
   const { isPro, isMax } = useAuth();
+
+  // 每週精選 state
+  const [weeklyReport, setWeeklyReport] = useState(null);
+  const [weeklyLoading, setWeeklyLoading] = useState(false);
+  const [weeklyError, setWeeklyError] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabParam || "news");
@@ -120,7 +126,15 @@ export default function FinancePage() {
 
   useEffect(() => {
     if (activeTab === "news") fetchArticles(1);
-  }, [activeTab]);
+    if (activeTab === "weekly" && isPro && !weeklyReport && !weeklyLoading) {
+      setWeeklyLoading(true);
+      setWeeklyError("");
+      getWeeklyReport()
+        .then((data) => setWeeklyReport(data))
+        .catch((e) => setWeeklyError(e.response?.data?.detail || "載入失敗，請稍後再試"))
+        .finally(() => setWeeklyLoading(false));
+    }
+  }, [activeTab, isPro]);
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages && p !== page) fetchArticles(p);
@@ -164,6 +178,7 @@ export default function FinancePage() {
                 onClick={() => handleTabChange(tab.key)}
               >
                 {tab.label}
+                {tab.key === "weekly" && <span className={styles.proBadge}>Pro</span>}
                 {tab.key === "stocks" && <span className={styles.proBadge}>Max</span>}
               </button>
             ))}
@@ -376,6 +391,80 @@ export default function FinancePage() {
                       <div className={styles.analysisEmptyIcon}>🔍</div>
                       <p>輸入股票代號，AI 即時彙整近期相關新聞與情緒分析</p>
                     </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ── 每週精選 ── */}
+          {activeTab === "weekly" && (
+            <div className={styles.weeklySection}>
+              {!isPro ? (
+                <div className={styles.comingSoon}>
+                  <div className={styles.comingSoonIcon}>📈</div>
+                  <h2 className={styles.comingSoonTitle}>每週精選看好標的</h2>
+                  <p className={styles.comingSoonDesc}>
+                    每週一 AI 彙整本週財經新聞，精選最具潛力的看好標的，附上新聞依據與短期展望。
+                  </p>
+                  <Link to="/pricing" className={styles.upgradeBtn}>升級 Pro 解鎖</Link>
+                </div>
+              ) : weeklyLoading ? (
+                <div className={styles.weeklyLoading}>
+                  <div className={styles.loadingSpinner} />
+                  <p>載入本週報告中…</p>
+                </div>
+              ) : weeklyError ? (
+                <div className={styles.analysisError}>{weeklyError}</div>
+              ) : !weeklyReport ? (
+                <div className={styles.weeklyEmpty}>
+                  <div className={styles.comingSoonIcon}>📭</div>
+                  <h2 className={styles.comingSoonTitle}>本週報告尚未產生</h2>
+                  <p className={styles.comingSoonDesc}>
+                    每週一早上 09:30 自動更新，若剛升級 Pro 請於下週一查看第一份報告。
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* 報告標頭 */}
+                  <div className={styles.weeklyHeader}>
+                    <div>
+                      <span className={styles.weeklyLabel}>WEEKLY PICKS</span>
+                      <h2 className={styles.weeklyTitle}>本週精選看好標的</h2>
+                      <p className={styles.weeklyDate}>
+                        週期：{weeklyReport.week_start} 起 ·
+                        基於 {weeklyReport.article_count} 篇財經正面新聞
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 市場總覽 */}
+                  <div className={styles.weeklyOverview}>
+                    <p className={styles.weeklyOverviewLabel}>本週市場概況</p>
+                    <p className={styles.weeklyOverviewText}>{weeklyReport.market_overview}</p>
+                  </div>
+
+                  {/* 精選標的卡片 */}
+                  <div className={styles.picksGrid}>
+                    {weeklyReport.picks.map((pick, i) => (
+                      <div key={i} className={styles.pickCard}>
+                        <div className={styles.pickCardHeader}>
+                          <span className={styles.pickTicker}>{pick.ticker}</span>
+                          <span className={styles.pickRank}>#{i + 1}</span>
+                        </div>
+                        <p className={styles.pickCompany}>{pick.company}</p>
+                        <p className={styles.pickReason}>{pick.reason}</p>
+                        <div className={styles.pickOutlookWrap}>
+                          <span className={styles.pickOutlookLabel}>短期展望</span>
+                          <span className={styles.pickOutlook}>{pick.outlook}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 免責聲明 */}
+                  {weeklyReport.disclaimer && (
+                    <p className={styles.weeklyDisclaimer}>{weeklyReport.disclaimer}</p>
                   )}
                 </>
               )}

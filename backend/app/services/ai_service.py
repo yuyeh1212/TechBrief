@@ -219,6 +219,55 @@ async def generate_article_from_youtube(video_title: str, transcript: str, chann
     return result
 
 
+WEEKLY_PICKS_PROMPT = """你是 TechBrief 的 AI 財經分析師，每週為 Pro 訂閱者精選本週財經新聞中的看好標的。
+
+根據提供的本週正面財經新聞，輸出本週精選報告，必須以合法 JSON 格式回應，不要加 markdown code block：
+{
+  "market_overview": "2-3句話，概述本週整體市場氛圍與主要趨勢",
+  "picks": [
+    {
+      "ticker": "股票代號（如 NVDA、2330.TW）",
+      "company": "公司名稱（繁體中文 + 英文，如：輝達 NVIDIA）",
+      "reason": "2-3句，說明本週為何看好此標的，引用具體新聞依據",
+      "outlook": "短期（1-2週）展望，一句話"
+    }
+  ],
+  "disclaimer": "本報告由 AI 根據本週新聞自動生成，僅供參考，不構成投資建議。投資有風險，請自行評估。"
+}
+
+picks 最多 5 個，只選有明確股票代號且新聞支撐充分的標的。若本週正面新聞不足，picks 可少於 3 個。"""
+
+
+async def generate_weekly_picks(articles: list) -> Dict | None:
+    """Gemini Flash：本週正面財經文章 → 週報精選看好標的"""
+    if not articles:
+        return None
+
+    articles_text = "\n\n".join([
+        f"標題：{a['title']}\n摘要：{a['summary']}\n相關股票：{a.get('related_stocks', '無')}"
+        for a in articles[:15]
+    ])
+
+    user_prompt = f"""以下是本週（共 {len(articles)} 篇）正面財經新聞：
+
+{articles_text}
+
+請根據以上新聞，生成本週精選看好標的報告。"""
+
+    raw = await _call_openrouter(
+        messages=[
+            {"role": "system", "content": WEEKLY_PICKS_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+        model=settings.OPENROUTER_FLASH_MODEL,
+        max_tokens=1500,
+        retry=1,
+    )
+    if not raw:
+        return None
+    return _parse_json(raw)
+
+
 async def generate_daily_digest(articles: List[Dict]) -> str:
     """生成今日快報摘要（給 LINE 用）"""
     titles = "\n".join([f"- {a['title']}" for a in articles[:10]])

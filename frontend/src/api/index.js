@@ -52,6 +52,10 @@ export const getOrderStatus = (trade_no) =>
 export const getStockAnalysis = (ticker) =>
   api.get("/analysis/stock", { params: { ticker }, timeout: 30000 }).then((r) => r.data);
 
+// 每週精選週報（Pro 限定）
+export const getWeeklyReport = () =>
+  api.get("/weekly-report/latest").then((r) => r.data);
+
 // 管理員後台
 export const adminGetStats = () =>
   api.get("/admin/stats").then((r) => r.data);
@@ -73,3 +77,6 @@ export const adminTriggerNews = () =>
 
 export const adminTriggerExpiry = () =>
   api.post("/admin/trigger-expiry-jwt").then((r) => r.data);
+
+export const adminTriggerWeeklyReport = () =>
+  api.post("/admin/trigger-weekly-jwt").then((r) => r.data);

@@ -798,3 +798,175 @@
     opacity: 1;
   }
 }
+
+/* ── 每週精選週報 ── */
+.weeklySection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.weeklyLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 0;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}
+
+.weeklyEmpty {
+  text-align: center;
+  padding: 60px 24px;
+}
+
+.weeklyHeader {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.weeklyLabel {
+  display: inline-block;
+  font-family: var(--font-headline);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--primary-container);
+  margin-bottom: 8px;
+}
+
+.weeklyTitle {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0 0 8px;
+}
+
+.weeklyDate {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.weeklyOverview {
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 32px;
+}
+
+.weeklyOverviewLabel {
+  font-family: var(--font-headline);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--primary-container);
+  margin: 0 0 10px;
+}
+
+.weeklyOverviewText {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.picksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.pickCard {
+  background: var(--surface-high);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: rgba(0, 229, 255, 0.35);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.pickCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pickTicker {
+  font-family: var(--font-headline);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+
+.pickRank {
+  font-family: var(--font-headline);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  background: var(--surface-container);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.pickCompany {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.pickReason {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--on-surface-variant);
+  margin: 0;
+  flex: 1;
+}
+
+.pickOutlookWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--outline-variant);
+}
+
+.pickOutlookLabel {
+  font-family: var(--font-headline);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #22c55e;
+}
+
+.pickOutlook {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  line-height: 1.5;
+}
+
+.weeklyDisclaimer {
+  font-size: 11px;
+  color: var(--on-surface-variant);
+  opacity: 0.5;
+  text-align: center;
+  margin: 0;
+  padding-top: 8px;
+}

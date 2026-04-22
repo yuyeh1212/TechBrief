@@ -12,7 +12,7 @@ from app.core.security import get_current_user
 from app.core.config import settings
 from app.models.user import User, UserPlan
 from app.models.article import Article
-from app.tasks.scheduler import daily_news_job, subscription_expiry_job
+from app.tasks.scheduler import daily_news_job, subscription_expiry_job, weekly_report_job
 
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -234,3 +234,13 @@ async def trigger_expiry_jwt(
     """手動觸發到期檢查任務（JWT 版）"""
     background_tasks.add_task(subscription_expiry_job)
     return {"message": "到期檢查任務已在背景啟動"}
+
+
+@router.post("/trigger-weekly-jwt")
+async def trigger_weekly_jwt(
+    background_tasks: BackgroundTasks,
+    _: User = Depends(verify_admin_user),
+):
+    """手動觸發每週精選週報任務（JWT 版）"""
+    background_tasks.add_task(weekly_report_job)
+    return {"message": "週報任務已在背景啟動"}

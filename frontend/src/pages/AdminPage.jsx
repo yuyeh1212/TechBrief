@@ -10,6 +10,7 @@ import {
   adminDeleteArticle,
   adminTriggerNews,
   adminTriggerExpiry,
+  adminTriggerWeeklyReport,
 } from "@/api";
 import styles from "./AdminPage.module.scss";
 
@@ -160,6 +161,15 @@ export default function AdminPage() {
     }
   };
 
+  const handleTriggerWeeklyReport = async () => {
+    try {
+      await adminTriggerWeeklyReport();
+      showMsg("✅ 週報任務已啟動（約 30 秒後完成）");
+    } catch (e) {
+      showMsg("❌ 啟動失敗：" + (e.response?.data?.detail || e.message));
+    }
+  };
+
   if (loading || !user || !isAdmin) return null;
 
   return (
@@ -244,6 +254,9 @@ export default function AdminPage() {
                       </button>
                       <button className={styles.actionBtn} onClick={handleTriggerExpiry}>
                         ⏰ 手動觸發到期檢查
+                      </button>
+                      <button className={styles.actionBtn} onClick={handleTriggerWeeklyReport}>
+                        📈 手動觸發週報生成
                       </button>
                       <button className={styles.actionBtn} onClick={loadStats}>
                         🔄 重新整理統計
