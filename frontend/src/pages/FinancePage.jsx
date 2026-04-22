@@ -57,7 +57,7 @@ export default function FinancePage() {
   };
 
   useEffect(() => {
-    if (tabParam && ["news", "reports", "analysis", "stocks"].includes(tabParam)) {
+    if (tabParam && ["news", "reports", "analysis", "weekly", "stocks"].includes(tabParam)) {
       setActiveTab(tabParam);
     } else if (!tabParam) {
       setActiveTab("news");
