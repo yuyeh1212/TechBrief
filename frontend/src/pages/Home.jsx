@@ -1,21 +1,33 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { getLatestArticles, getArticles } from "@/api";
+import { getLatestArticles, getTodayHotArticle } from "@/api";
 import ArticleCard from "@/components/ui/ArticleCard";
 import SubscribeBar from "@/components/ui/SubscribeBar";
 import styles from "./Home.module.scss";
 
 export default function Home() {
   const [featured, setFeatured] = useState(null);
+  const [featuredLabel, setFeaturedLabel] = useState({ label: "今日頭條", en: "TOP STORY", hot: false });
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const latest = await getLatestArticles(10);
-        if (latest.length > 0) {
+        const [latest, hotArticle] = await Promise.all([
+          getLatestArticles(10),
+          getTodayHotArticle().catch(() => null),
+        ]);
+
+        // 若今日有瀏覽量 > 0 的文章，置頂為「今日精選」
+        if (hotArticle && hotArticle.view_count > 0) {
+          setFeatured(hotArticle);
+          setFeaturedLabel({ label: "今日精選", en: "HOT TODAY", hot: true });
+          // 從 latest 中移除已置頂的文章，避免重複
+          setArticles(latest.filter((a) => a.id !== hotArticle.id));
+        } else if (latest.length > 0) {
           setFeatured(latest[0]);
+          setFeaturedLabel({ label: "今日頭條", en: "TOP STORY", hot: false });
           setArticles(latest.slice(1));
         }
       } catch (e) {
@@ -65,7 +77,7 @@ export default function Home() {
             {/* Featured */}
             {featured && (
               <section className={styles.featuredSection}>
-                <SectionLabel label="今日頭條" en="TOP STORY" />
+                <SectionLabel label={featuredLabel.label} en={featuredLabel.en} hot={featuredLabel.hot} />
                 <ArticleCard article={featured} featured />
               </section>
             )}
@@ -96,11 +108,14 @@ export default function Home() {
   );
 }
 
-function SectionLabel({ label, en }) {
+function SectionLabel({ label, en, hot = false }) {
   return (
     <div className={styles.sectionLabel}>
       <span className={styles.sectionEn}>{en}</span>
-      <h2 className={styles.sectionTitle}>{label}</h2>
+      <h2 className={styles.sectionTitle}>
+        {label}
+        {hot && <span className={styles.hotBadge}>🔥 熱門</span>}
+      </h2>
     </div>
   );
 }

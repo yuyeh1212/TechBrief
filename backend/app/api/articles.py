@@ -101,6 +101,31 @@ async def get_latest_articles(
     )
     return result.scalars().all()
 
+
+@router.get("/today-hot", response_model=Optional[ArticleListOut])
+async def get_today_hot_article(
+    db: AsyncSession = Depends(get_db),
+):
+    """取得今日（台灣時間 UTC+8）瀏覽量最高的文章"""
+    from datetime import timezone, timedelta
+    tz_taipei = timezone(timedelta(hours=8))
+    now_taipei = datetime.now(tz_taipei)
+    today_start = now_taipei.replace(hour=0, minute=0, second=0, microsecond=0)
+    # 轉換為 UTC 存入 DB 的起始時間（naive）
+    today_start_utc = today_start.astimezone(timezone.utc).replace(tzinfo=None)
+
+    result = await db.execute(
+        select(Article)
+        .where(
+            Article.is_published == True,
+            Article.created_at >= today_start_utc,
+        )
+        .order_by(Article.view_count.desc(), Article.created_at.desc())
+        .limit(1)
+    )
+    article = result.scalar_one_or_none()
+    return article
+
 @router.get("/search", response_model=PaginatedArticles)
 async def search_articles(
     q: str = Query(..., min_length=1),

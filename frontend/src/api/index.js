@@ -21,6 +21,9 @@ export const getArticles = (params = {}) =>
 export const getLatestArticles = (limit = 10) =>
   api.get("/articles/latest", { params: { limit } }).then((r) => r.data);
 
+export const getTodayHotArticle = () =>
+  api.get("/articles/today-hot").then((r) => r.data);
+
 export const getArticle = (slug) =>
   api.get(`/articles/${slug}`).then((r) => r.data);
 
