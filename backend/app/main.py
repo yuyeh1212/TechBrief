@@ -8,7 +8,8 @@ from app.tasks.scheduler import start_scheduler
 from app.api import articles, subscribers, line_webhook, admin, auth, payment, analysis, weekly_report
 from app.models import user as _user_model         # 確保 User table 被 Base 掃到
 from app.models import order as _order_model        # 確保 Order table 被 Base 掃到
-from app.models import weekly_report as _wr_model   # 確保 WeeklyReport table 被 Base 掃到
+from app.models import weekly_report as _wr_model             # 確保 WeeklyReport table 被 Base 掃到
+from app.models import stock_analysis_cache as _sac_model     # 確保 StockAnalysisCache table 被 Base 掃到
 
 
 @asynccontextmanager

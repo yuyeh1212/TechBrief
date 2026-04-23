@@ -26,7 +26,7 @@ async def get_db():
 
 
 async def init_db():
-    from app.models import article, subscriber, weekly_report  # noqa: F401
+    from app.models import article, subscriber, weekly_report, stock_analysis_cache  # noqa: F401
     async with engine.begin() as conn:
         # create_all 不會刪除已存在的表，只建立新的
         await conn.run_sync(Base.metadata.create_all)
