@@ -33,6 +33,7 @@ export default function FinancePage() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState("");
+  const [queryUsage, setQueryUsage] = useState(null); // { daily_used, daily_limit, weekly_used, weekly_limit }
   const inputRef = useRef(null);
 
   // 歷史查詢記錄（localStorage，最多 5 筆）
@@ -97,9 +98,29 @@ export default function FinancePage() {
       const data = await getStockAnalysis(query);
       setAnalysisResult(data);
       saveHistory(query);
+      // 更新剩餘次數
+      if (data.daily_limit) {
+        setQueryUsage({
+          daily_used: data.daily_used,
+          daily_limit: data.daily_limit,
+          weekly_used: data.weekly_used,
+          weekly_limit: data.weekly_limit,
+        });
+      }
     } catch (e) {
-      const msg = e.response?.data?.detail || "分析失敗，請稍後再試";
-      setAnalysisError(msg);
+      const detail = e.response?.data?.detail;
+      if (detail && typeof detail === "object") {
+        // 超出限制的結構化錯誤
+        setAnalysisError(detail.message);
+        setQueryUsage({
+          daily_used: detail.daily_used,
+          daily_limit: detail.daily_limit,
+          weekly_used: detail.weekly_used,
+          weekly_limit: detail.weekly_limit,
+        });
+      } else {
+        setAnalysisError(typeof detail === "string" ? detail : "分析失敗，請稍後再試");
+      }
     } finally {
       setAnalysisLoading(false);
     }
@@ -283,9 +304,21 @@ export default function FinancePage() {
                         {analysisLoading ? "分析中…" : "開始分析"}
                       </button>
                     </div>
-                    <p className={styles.analysisHint}>
-                      支援台股（如 2330.TW）與美股（如 NVDA、AAPL）
-                    </p>
+                    <div className={styles.analysisHintRow}>
+                      <p className={styles.analysisHint}>
+                        支援台股（如 2330.TW）與美股（如 NVDA、AAPL）
+                      </p>
+                      {queryUsage && (
+                        <p className={styles.queryUsage}>
+                          今日 <span className={queryUsage.daily_used >= queryUsage.daily_limit ? styles.usageFull : ""}>
+                            {queryUsage.daily_used}/{queryUsage.daily_limit}
+                          </span>
+                          　本週 <span className={queryUsage.weekly_used >= queryUsage.weekly_limit ? styles.usageFull : ""}>
+                            {queryUsage.weekly_used}/{queryUsage.weekly_limit}
+                          </span>
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* 歷史查詢記錄 */}

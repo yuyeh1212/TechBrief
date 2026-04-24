@@ -2,19 +2,23 @@ import json
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.user import User, UserPlan
 from app.models.article import Article
 from app.models.stock_analysis_cache import StockAnalysisCache
+from app.models.stock_query_log import StockQueryLog
 from app.services.ai_service import generate_stock_analysis
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 
 CACHE_TTL_HOURS_WITH_ARTICLES = 24   # 有 DB 文章支撐 → 每天刷新
 CACHE_TTL_HOURS_NO_ARTICLES  = 168  # 無 DB 文章（純 AI 知識）→ 7 天刷新
+
+DAILY_LIMIT  = 5   # 每人每天最多查詢次數
+WEEKLY_LIMIT = 20  # 每人每週最多查詢次數
 
 
 @router.get("/stock")
@@ -34,6 +38,51 @@ async def get_stock_analysis(
 
     ticker_upper = ticker.strip().upper()
     now = datetime.now(timezone.utc)
+
+    # ── 0. 查詢次數限制（admin 豁免）
+    if not is_admin:
+        day_start  = now - timedelta(hours=24)
+        week_start = now - timedelta(days=7)
+
+        daily_count = (await db.execute(
+            select(func.count()).select_from(StockQueryLog).where(
+                StockQueryLog.user_id == current_user.id,
+                StockQueryLog.created_at >= day_start,
+            )
+        )).scalar_one()
+
+        weekly_count = (await db.execute(
+            select(func.count()).select_from(StockQueryLog).where(
+                StockQueryLog.user_id == current_user.id,
+                StockQueryLog.created_at >= week_start,
+            )
+        )).scalar_one()
+
+        if daily_count >= DAILY_LIMIT:
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "daily_limit",
+                    "message": f"今日查詢次數已達上限（{DAILY_LIMIT} 次），請明天再試",
+                    "daily_used": daily_count,
+                    "daily_limit": DAILY_LIMIT,
+                    "weekly_used": weekly_count,
+                    "weekly_limit": WEEKLY_LIMIT,
+                }
+            )
+
+        if weekly_count >= WEEKLY_LIMIT:
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "weekly_limit",
+                    "message": f"本週查詢次數已達上限（{WEEKLY_LIMIT} 次），請下週再試",
+                    "daily_used": daily_count,
+                    "daily_limit": DAILY_LIMIT,
+                    "weekly_used": weekly_count,
+                    "weekly_limit": WEEKLY_LIMIT,
+                }
+            )
     # 快取 TTL：有文章支撐用 24h，純 AI 知識用 7d
     cache_cutoff = min(
         now - timedelta(hours=CACHE_TTL_HOURS_WITH_ARTICLES),
@@ -70,6 +119,15 @@ async def get_stock_analysis(
             key_points = []
             related_articles = []
 
+        # 記錄查詢 log
+        if not is_admin:
+            db.add(StockQueryLog(user_id=current_user.id, ticker=ticker_upper, was_cached=True))
+            await db.flush()
+            daily_used  = daily_count + 1
+            weekly_used = weekly_count + 1
+        else:
+            daily_used = weekly_used = 0
+
         return {
             "ticker": ticker_upper,
             "company_name": cached.company_name,
@@ -81,6 +139,10 @@ async def get_stock_analysis(
             "has_articles": cached.has_articles,
             "related_articles": related_articles,
             "cached": True,
+            "daily_used": daily_used,
+            "daily_limit": DAILY_LIMIT,
+            "weekly_used": weekly_used,
+            "weekly_limit": WEEKLY_LIMIT,
         }
 
     # ── 2. 快取未命中，呼叫 AI
@@ -108,7 +170,15 @@ async def get_stock_analysis(
 
     related_articles_list = [{"title": a.title, "slug": a.slug} for a in articles]
 
-    # ── 3. 存入快取
+    # ── 3. 記錄查詢 log + 存入快取
+    if not is_admin:
+        db.add(StockQueryLog(user_id=current_user.id, ticker=ticker_upper, was_cached=False))
+        await db.flush()
+        daily_used  = daily_count + 1
+        weekly_used = weekly_count + 1
+    else:
+        daily_used = weekly_used = 0
+
     new_cache = StockAnalysisCache(
         ticker=ticker_upper,
         company_name=analysis.get("company_name"),
@@ -133,4 +203,8 @@ async def get_stock_analysis(
         "ticker": ticker_upper,
         "related_articles": related_articles_list,
         "cached": False,
+        "daily_used": daily_used,
+        "daily_limit": DAILY_LIMIT,
+        "weekly_used": weekly_used,
+        "weekly_limit": WEEKLY_LIMIT,
     }

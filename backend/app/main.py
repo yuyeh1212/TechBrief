@@ -10,6 +10,7 @@ from app.models import user as _user_model         # 確保 User table 被 Base 
 from app.models import order as _order_model        # 確保 Order table 被 Base 掃到
 from app.models import weekly_report as _wr_model             # 確保 WeeklyReport table 被 Base 掃到
 from app.models import stock_analysis_cache as _sac_model     # 確保 StockAnalysisCache table 被 Base 掃到
+from app.models import stock_query_log as _sql_model          # 確保 StockQueryLog table 被 Base 掃到
 
 
 @asynccontextmanager
