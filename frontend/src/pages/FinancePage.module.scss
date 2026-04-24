@@ -739,27 +739,34 @@
 }
 
 /* 查詢次數提示 */
-.analysisHintRow {
+.queryUsageRow {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 8px;
   max-width: 640px;
-  margin: 0 auto;
+  margin: 0 auto 12px;
   flex-wrap: wrap;
-  gap: 4px;
 }
 
-.queryUsage {
-  font-size: 11px;
+.usageBadge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-headline);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: var(--surface-container);
+  border: 1px solid rgba(0, 229, 255, 0.2);
   color: var(--on-surface-variant);
-  opacity: 0.7;
-  white-space: nowrap;
+  letter-spacing: 0.3px;
+  transition: border-color 0.2s, color 0.2s;
 }
 
-.usageFull {
+.usageBadgeFull {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.4);
   color: #f87171;
-  font-weight: 700;
-  opacity: 1;
 }
 
 /* ── 歷史查詢記錄 ── */

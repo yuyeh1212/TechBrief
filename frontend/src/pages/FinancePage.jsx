@@ -284,6 +284,17 @@ export default function FinancePage() {
                 <>
                   {/* 搜尋列 */}
                   <div className={styles.analysisSearchWrap}>
+                    {/* 用量標籤（有資料才顯示） */}
+                    {queryUsage && (
+                      <div className={styles.queryUsageRow}>
+                        <span className={`${styles.usageBadge} ${queryUsage.daily_used >= queryUsage.daily_limit ? styles.usageBadgeFull : ""}`}>
+                          今日 {queryUsage.daily_used}/{queryUsage.daily_limit} 次
+                        </span>
+                        <span className={`${styles.usageBadge} ${queryUsage.weekly_used >= queryUsage.weekly_limit ? styles.usageBadgeFull : ""}`}>
+                          本週 {queryUsage.weekly_used}/{queryUsage.weekly_limit} 次
+                        </span>
+                      </div>
+                    )}
                     <div className={styles.analysisSearchBox}>
                       <span className={styles.analysisSearchIcon}>📊</span>
                       <input
@@ -304,21 +315,9 @@ export default function FinancePage() {
                         {analysisLoading ? "分析中…" : "開始分析"}
                       </button>
                     </div>
-                    <div className={styles.analysisHintRow}>
-                      <p className={styles.analysisHint}>
-                        支援台股（如 2330.TW）與美股（如 NVDA、AAPL）
-                      </p>
-                      {queryUsage && (
-                        <p className={styles.queryUsage}>
-                          今日 <span className={queryUsage.daily_used >= queryUsage.daily_limit ? styles.usageFull : ""}>
-                            {queryUsage.daily_used}/{queryUsage.daily_limit}
-                          </span>
-                          　本週 <span className={queryUsage.weekly_used >= queryUsage.weekly_limit ? styles.usageFull : ""}>
-                            {queryUsage.weekly_used}/{queryUsage.weekly_limit}
-                          </span>
-                        </p>
-                      )}
-                    </div>
+                    <p className={styles.analysisHint}>
+                      支援台股（如 2330.TW）與美股（如 NVDA、AAPL）
+                    </p>
                   </div>
 
                   {/* 歷史查詢記錄 */}
@@ -355,7 +354,7 @@ export default function FinancePage() {
 
                   {/* 錯誤 */}
                   {analysisError && !analysisLoading && (
-                    <div className={styles.analysisError}>{analysisError}</div>
+                    <div className={styles.analysisError} style={{ marginTop: "24px" }}>{analysisError}</div>
                   )}
 
                   {/* 結果卡片 */}
